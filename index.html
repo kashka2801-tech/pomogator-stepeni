@@ -101,6 +101,11 @@ summary{cursor:pointer;font-weight:600;min-height:40px;padding:.4rem 0}
 .tok.gone .lt::after{content:"";position:absolute;left:-3px;right:-3px;top:.55em;border-top:2.5px solid var(--ink);transform:rotate(-35deg)}
 .dot{padding:0 .05em}
 .cw-msg{font-size:.95rem;margin:.4rem 0 0}
+
+.m .bp{font-size:1.9em;line-height:1;vertical-align:middle;font-weight:300}
+.pp-in{flex-wrap:nowrap!important;gap:.15rem!important}
+.pp-in .cf{width:2.9em}
+@media (max-width:420px){.inp input.ex{width:2.3em}.inp input.cf{width:2.7em}.pp-in .vv{font-size:1.3rem}.cw-f{font-size:1.3rem}.br{font-size:2rem}}
 .cmp{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
 @media (max-width:560px){.cmp{grid-template-columns:1fr}html{font-size:16px}.prompt{font-size:1.3rem}}
 /* памятка */
@@ -282,13 +287,14 @@ function inputUI(t){
     case 'frac': return '<span class="fr-in"><span class="fn">' + monoUI('n', t.vars, true, 'Числитель') + '</span><span class="fd">' + monoUI('d', t.vars, true, 'Знаменатель') + '</span></span>';
     case 'nfrac': return '<span class="fr-in"><span class="fn">' + fld('n','Числитель','') + '</span><span class="fd">' + fld('d','Знаменатель (пустое поле — 1)','1') + '</span></span>';
     case 'int': return fld('v','Ответ','', 'wide', t.sign) + (t.sign ? ' <button class="btn sm ghost" type="button" data-a="sign" aria-label="Поставить или убрать минус">± минус</button>' : '');
-    case 'powprod': return '<span class="mono-in">' + fld('o','Число перед скобкой (оставь пустым, если его нет)','','cf') + '<span class="br">(</span>' + monoUI('i', t.vars, true, 'Внутри скобки') + '<span class="br">)</span><span class="brsup">' + t.N + '</span></span>';
+    case 'powprod': return '<span class="mono-in pp-in">' + fld('o','Число перед скобкой (оставь пустым, если его нет)','','cf') + '<span class="br">(</span>' + monoUI('i', t.vars, true, 'Внутри скобки').replace('mono-in','mono-in pp-in') + '<span class="br">)</span><span class="brsup">' + t.N + '</span></span>';
     case 'choice': return '<div style="width:100%">' + t.opts.map(function(o){ return '<button class="btn opt" type="button" data-opt="' + o.id + '" aria-pressed="false">' + o.html + '</button>'; }).join('') + '</div>';
   }
   return '';
 }
 function noteFor(t){
-  if (t.type === 'mono' || t.type === 'frac' || t.type === 'powprod') return '<p class="note">Показатели вписывай в маленькие поля у букв. Пустое поле показателя — буквы в ответе нет, показатель 1 впиши как 1. Пустое поле числа — это 1.</p>';
+  if (t.type === 'powprod') return '<p class="note">Первое поле — число перед скобкой: обычно его оставляют пустым. В скобке — число и показатели букв. Пустое поле показателя — буквы нет.</p>';
+  if (t.type === 'mono' || t.type === 'frac') return '<p class="note">Показатели вписывай в маленькие поля у букв. Пустое поле показателя — буквы в ответе нет, показатель 1 впиши как 1. Пустое поле числа — это 1.</p>';
   if (t.type === 'nfrac') return '<p class="note">Если ответ — целое число, знаменатель можно оставить пустым.</p>';
   return '';
 }
@@ -723,10 +729,10 @@ G.prodBig = function(){
 G.fracpow = function(){
   var pr = pick(PAIRS), a = pr[0], b = pr[1], k = pick([1,2,3]), n = ri(2,3), m = ri(1,4), p = ri(1,4);
   var top = (k>1?k:'') + P(a,m);
-  return T({gen:'fracpow', sig:'fracpow'+a+k+n+m+p, skill:'frac', prompt:M('(' + F(top, P(b,p)) + ')<sup>' + n + '</sup>'), ask:'Возведи дробь в степень (' + b + ' ≠ 0).',
+  return T({gen:'fracpow', sig:'fracpow'+a+k+n+m+p, skill:'frac', prompt:M('<span class="bp">(</span>' + F(top, P(b,p)) + '<span class="bp">)</span><sup>' + n + '</sup>'), ask:'Возведи дробь в степень (' + b + ' ≠ 0).',
     type:'frac', vars:[a,b], ans:{n:{c:ipow(k,n), e:o1(a,m*n)}, d:{c:1, e:o1(b,p*n)}},
     hints:['Что стоит в числителе и что в знаменателе? На что действует показатель ' + n + '?', RULE.frac, 'Следующий шаг: ' + M(F('(' + top + ')<sup>' + n + '</sup>', '(' + P(b,p) + ')<sup>' + n + '</sup>')) + '.'],
-    solution:'<p>' + M('(' + F(top, P(b,p)) + ')<sup>' + n + '</sup> = ' + F('(' + top + ')<sup>' + n + '</sup>', '(' + P(b,p) + ')<sup>' + n + '</sup>') + ' = ' + F(mono(ipow(k,n),o1(a,m*n)), P(b,p*n))) + '</p>',
+    solution:'<p>' + M('<span class="bp">(</span>' + F(top, P(b,p)) + '<span class="bp">)</span><sup>' + n + '</sup> = ' + F('(' + top + ')<sup>' + n + '</sup>', '(' + P(b,p) + ')<sup>' + n + '</sup>') + ' = ' + F(mono(ipow(k,n),o1(a,m*n)), P(b,p*n))) + '</p>',
     diag:function(u){ if (k>1 && u.n.c === k) return {msg:'Число ' + k + ' в числителе тоже возводится в степень: ' + X(k+'^'+n) + ' = ' + ipow(k,n) + '.', cat:'coef_forgot'}; if ((u.d.e[b]||0) === p && p*n !== p) return {msg:'Степень действует и на знаменатель: ' + X('('+P(b,p)+')^'+n) + '.', cat:'skill:frac'}; if ((u.n.e[a]||0) === m+n) return {msg:addMsg(m,n), cat:'add_mult'}; return null; }});
 };
 G.inv1 = function(){
@@ -903,13 +909,13 @@ var CARDS = [
   err:'<p>' + X('(10a^2b^5)^4 ≠ 10a^8b^{20}') + ' — число 10 внутри скобки тоже возводится в степень.</p><p>' + X('(a + b)^2 ≠ a^2 + b^2') + ' — это правило для произведения, а не для суммы. Проверка: ' + X('(1 + 2)^2 = 9') + ', а ' + X('1^2 + 2^2 = 5') + '.</p>',
   rev:'Обратно: ' + X('a^nb^n = (ab)^n') + '. Например, ' + X('81m^2p^2q^2 = 9^2m^2p^2q^2 = (9mpq)^2') + ' и ' + X('2^4 * 5^4 = 10^4') + '. Запись ' + X('81(mpq)^2') + ' верна, но преобразование не закончено.',
   gens:['prod1','prod2','prodBig','inv2']},
- {id:'frac', t:'5. Степень дроби', f:M('(' + F('a','b') + ')<sup>n</sup> = ' + F(S('a^n'),S('b^n'))) + ', b ≠ 0',
+ {id:'frac', t:'5. Степень дроби', f:M('<span class="bp">(</span>' + F('a','b') + '<span class="bp">)</span><sup>n</sup> = ' + F(S('a^n'),S('b^n'))) + ', b ≠ 0',
   words:'Чтобы возвести дробь в степень, возводят в степень и числитель, и знаменатель.',
-  why:'<p>' + M('(' + F('a','b') + ')<sup>3</sup> = ' + F('a','b') + ' · ' + F('a','b') + ' · ' + F('a','b') + ' = ' + F('a·a·a','b·b·b') + ' = ' + F(S('a^3'),S('b^3'))) + '</p><p>При умножении дробей числители перемножаются и знаменатели перемножаются.</p>',
-  numEx:M('(' + F('2','3') + ')<sup>3</sup> = ' + F(S('2^3'),S('3^3')) + ' = ' + F('8','27')),
-  letEx:M('(' + F(S('2x^2'),'y') + ')<sup>3</sup> = ' + F(S('8x^6'),S('y^3'))),
-  err:'<p>' + M('(' + F('2','3') + ')<sup>2</sup> ≠ ' + F('4','3')) + ' — знаменатель тоже возводится в степень.</p><p>' + M(F('1',S('x^3')) + ' · ' + F('1',S('y^5')) + ' = ' + F('1',S('x^3y^5'))) + ', а не ' + M(F('1',S('(xy)^8'))) + ' — основания x и y разные.</p>',
-  rev:'Обратно: ' + M(F(S('a^n'),S('b^n')) + ' = (' + F('a','b') + ')<sup>n</sup>') + '. Например, ' + M(F(S('10^4'),S('5^4')) + ' = (' + F('10','5') + ')<sup>4</sup> = 2<sup>4</sup> = 16') + '.',
+  why:'<p>' + M('<span class="bp">(</span>' + F('a','b') + '<span class="bp">)</span><sup>3</sup> = ' + F('a','b') + ' · ' + F('a','b') + ' · ' + F('a','b') + ' = ' + F('a·a·a','b·b·b') + ' = ' + F(S('a^3'),S('b^3'))) + '</p><p>При умножении дробей числители перемножаются и знаменатели перемножаются.</p>',
+  numEx:M('<span class="bp">(</span>' + F('2','3') + '<span class="bp">)</span><sup>3</sup> = ' + F(S('2^3'),S('3^3')) + ' = ' + F('8','27')),
+  letEx:M('<span class="bp">(</span>' + F(S('2x^2'),'y') + '<span class="bp">)</span><sup>3</sup> = ' + F(S('8x^6'),S('y^3'))),
+  err:'<p>' + M('<span class="bp">(</span>' + F('2','3') + '<span class="bp">)</span><sup>2</sup> ≠ ' + F('4','3')) + ' — знаменатель тоже возводится в степень.</p><p>' + M(F('1',S('x^3')) + ' · ' + F('1',S('y^5')) + ' = ' + F('1',S('x^3y^5'))) + ', а не ' + M(F('1',S('(xy)^8'))) + ' — основания x и y разные.</p>',
+  rev:'Обратно: ' + M(F(S('a^n'),S('b^n')) + ' = <span class="bp">(</span>' + F('a','b') + '<span class="bp">)</span><sup>n</sup>') + '. Например, ' + M(F(S('10^4'),S('5^4')) + ' = <span class="bp">(</span>' + F('10','5') + '<span class="bp">)</span><sup>4</sup> = 2<sup>4</sup> = 16') + '.',
   gens:['fracpow','recip']},
  {id:'zero', t:'Дополнительно: нулевой показатель', f:X('a^0 = 1') + ', a ≠ 0',
   words:'Любое число, кроме нуля, в нулевой степени равно 1. Выражение 0⁰ не определяют.',
@@ -971,8 +977,8 @@ var LESSONS = [
   {h:'Число тоже множитель', b:'<p>' + X('(2a)^3 = 2^3 * a^3 = 8a^3') + ', а не ' + X('2a^3') + '.</p>',
    q:function(){ return T({skill:'prod', cat:'coef_forgot', prompt:X('(3x)^2'), ask:'Возведи в степень.', type:'mono', vars:['x'], ans:{c:9,e:{x:2}}, diag:function(u){ return u.c === 3 ? {msg:'Число 3 в скобке тоже возводится в квадрат: 3² = 9.', cat:'coef_forgot'} : u.c === 6 ? {msg:'3² = 3·3 = 9, а не 3·2.', cat:'calc'} : null; }}); }}]},
  {t:'Степень дроби', s:[
-  {h:'Числитель и знаменатель', b:'<p>' + M('(' + F('a','b') + ')<sup>3</sup> = ' + F('a','b') + '·' + F('a','b') + '·' + F('a','b') + ' = ' + F(S('a^3'),S('b^3'))) + '</p>',
-   q:function(){ return T({skill:'frac', prompt:M('(' + F('x','y') + ')<sup>4</sup>'), ask:'Возведи дробь в степень.', type:'frac', vars:['x','y'], ans:{n:{c:1,e:{x:4}}, d:{c:1,e:{y:4}}}}); }},
+  {h:'Числитель и знаменатель', b:'<p>' + M('<span class="bp">(</span>' + F('a','b') + '<span class="bp">)</span><sup>3</sup> = ' + F('a','b') + '·' + F('a','b') + '·' + F('a','b') + ' = ' + F(S('a^3'),S('b^3'))) + '</p>',
+   q:function(){ return T({skill:'frac', prompt:M('<span class="bp">(</span>' + F('x','y') + '<span class="bp">)</span><sup>4</sup>'), ask:'Возведи дробь в степень.', type:'frac', vars:['x','y'], ans:{n:{c:1,e:{x:4}}, d:{c:1,e:{y:4}}}}); }},
   {h:'Умножение дробей со степенями', b:'<p>' + M(F('1',S('x^3')) + ' · ' + F('1',S('y^5')) + ' = ' + F('1',S('x^3y^5'))) + '. Знаменатели перемножаются, но показатели не складываются: основания разные.</p>',
    q:function(){ return CH({skill:'frac', cat:'diff_bases', prompt:M(F('1',S('a^2')) + ' · ' + F('1',S('b^4'))), ask:'Чему это равно?', opts:[[M(F('1',S('a^2b^4'))),1,'Знаменатели перемножились, показатели остались у своих букв.'],[M(F('1',S('(ab)^6'))),0,'Нельзя сложить 2 и 4: основания a и b разные.','diff_bases'],[M(F('1',S('ab^6'))),0,'Показатель 2 был у a, он не может перейти к b.','diff_bases']]}); }}]},
  {t:'Запись в виде степени', s:[
@@ -1002,10 +1008,10 @@ var CHOOSE = [
  {e:M(F(S('x^9'),S('x^4'))), ok:['div'], ex:'Делятся степени с основанием x: ' + X('x^{9−4} = x^5') + '.'},
  {e:X('(y^3)^5'), ok:['pp'], ex:'Степень ' + X('y^3') + ' возводится в 5-ю степень: ' + X('y^{15}') + '.'},
  {e:X('(3ab)^2'), ok:['prod'], ex:'В скобке произведение 3·a·b: ' + X('3^2a^2b^2 = 9a^2b^2') + '.', fb:{mult:'Здесь нет двух степеней с одинаковым основанием, которые умножаются. Внешняя степень действует на произведение.'}},
- {e:M('(' + F('x','y') + ')<sup>4</sup>'), ok:['frac'], ex:M('(' + F('x','y') + ')<sup>4</sup> = ' + F(S('x^4'),S('y^4'))) + '.'},
+ {e:M('<span class="bp">(</span>' + F('x','y') + '<span class="bp">)</span><sup>4</sup>'), ok:['frac'], ex:M('<span class="bp">(</span>' + F('x','y') + '<span class="bp">)</span><sup>4</sup> = ' + F(S('x^4'),S('y^4'))) + '.'},
  {e:X('x^3 * y^5'), ok:['none'], cat:'diff_bases', ex:'Основания x и y разные — показатели не складываются, выражение остаётся ' + X('x^3y^5') + '.', fb:{mult:'Правило умножения работает только для одинаковых оснований, а здесь x и y.', prod:'Чтобы собрать ' + X('(xy)^n') + ', у x и y должны быть одинаковые показатели.'}},
  {e:X('(a^5 * a^2)^3'), ok:['mult','prod'], ex:'Оба пути верны. Можно сначала внутри скобки: ' + X('(a^7)^3 = a^{21}') + '. Можно сначала степень произведения: ' + X('(a^5)^3 * (a^2)^3 = a^{15} * a^6 = a^{21}') + '.'},
- {e:M('(' + F(S('a^7'),S('a^3')) + ')<sup>2</sup>'), ok:['div','frac'], ex:'Оба пути верны: ' + M('(a<sup>4</sup>)<sup>2</sup> = a<sup>8</sup>') + ' или ' + M(F(S('a^{14}'),S('a^6')) + ' = a<sup>8</sup>') + '.'},
+ {e:M('<span class="bp">(</span>' + F(S('a^7'),S('a^3')) + '<span class="bp">)</span><sup>2</sup>'), ok:['div','frac'], ex:'Оба пути верны: ' + M('(a<sup>4</sup>)<sup>2</sup> = a<sup>8</sup>') + ' или ' + M(F(S('a^{14}'),S('a^6')) + ' = a<sup>8</sup>') + '.'},
  {e:X('2^5 * 2^3 * 2'), ok:['mult'], ex:X('2^{5+3+1} = 2^9') + '. У последней двойки показатель 1.'},
  {e:X('(2x^3)^4'), ok:['prod'], ex:X('2^4 * (x^3)^4 = 16x^{12}') + '. Потом для ' + X('(x^3)^4') + ' пригодится и степень в степени.'},
  {e:X('(a^2)^3 * a^4'), ok:['pp'], cat:'add_mult', ex:'Сначала избавимся от скобки: ' + X('(a^2)^3 = a^6') + ', потом ' + X('a^6 * a^4 = a^{10}') + '.', fb:{mult:'Показатель 2 стоит внутри скобки, на него действует внешний показатель 3. Пока скобка не раскрыта, складывать 2 и 4 нельзя.'}},
@@ -1014,7 +1020,7 @@ var CHOOSE = [
  {e:X('(a + b)^2'), ok:['none'], cat:'sum_pow', ex:'В скобках сумма, а правила из списка — для произведения и частного. ' + X('(a + b)^2 ≠ a^2 + b^2') + ': при a = 1, b = 2 слева 9, справа 5.', fb:{prod:'В скобках не произведение, а сумма. Проверка: ' + X('(1 + 2)^2 = 9') + ', а ' + X('1^2 + 2^2 = 5') + '.'}},
  {e:'Записать ' + X('81m^2p^2q^2') + ' в виде квадрата', ok:['prod'], ex:'Степень произведения в обратную сторону: ' + X('9^2m^2p^2q^2 = (9mpq)^2') + '.'},
  {e:M(F(S('27^3'),S('3^5'))), ok:['dec'], cat:'skill:num', ex:X('27 = 3^3') + ', тогда ' + X('27^3 = (3^3)^3 = 3^9') + ', и ' + M(F(S('3^9'),S('3^5')) + ' = 3<sup>4</sup>') + '.', fb:{div:'Основания 27 и 3 разные. Сначала запиши 27 как степень тройки.'}},
- {e:M('(' + F(S('x^3'),S('y^2')) + ')<sup>3</sup>'), ok:['frac'], ex:M(F(S('(x^3)^3'),S('(y^2)^3')) + ' = ' + F(S('x^9'),S('y^6'))) + '.'},
+ {e:M('<span class="bp">(</span>' + F(S('x^3'),S('y^2')) + '<span class="bp">)</span><sup>3</sup>'), ok:['frac'], ex:M(F(S('(x^3)^3'),S('(y^2)^3')) + ' = ' + F(S('x^9'),S('y^6'))) + '.'},
  {e:X('(x^2y^3)^4'), ok:['prod'], ex:X('(x^2)^4 * (y^3)^4 = x^8y^{12}') + '.'}
 ];
 var RULE_TXT = {mult:'Умножение степеней подходит, когда рядом стоят степени с одинаковым основанием и между ними знак умножения.', div:'Деление степеней подходит, когда степени с одинаковым основанием стоят в числителе и знаменателе.', pp:'Степень в степени подходит, когда степень стоит в скобках и вся скобка возводится в степень.', prod:'Степень произведения подходит, когда в скобках несколько множителей.', frac:'Степень дроби подходит, когда в степень возводится дробь.', dec:'Разложение нужно, когда основания — разные числа, но их можно связать: например, 10 = 2·5.', none:'Здесь всё же есть что преобразовать.'};
@@ -1110,7 +1116,7 @@ var MEMO = '<h3>Главное</h3><ul>' +
  '<li>Степень в степени — показатели перемножаются: ' + X('(a^3)^2 = a^6') + '.</li>' +
  '<li>При сокращении считай, сколько одинаковых множителей осталось и где: ' + M(F(S('a^6'),S('a^9')) + ' = ' + F('1',S('a^3'))) + '.</li>' +
  '<li>Степень произведения действует на каждый множитель, включая число: ' + X('(10a^2)^4 = 10000a^8') + '.</li>' +
- '<li>Степень дроби — и числитель, и знаменатель: ' + M('(' + F('a','b') + ')<sup>n</sup> = ' + F(S('a^n'),S('b^n'))) + '.</li>' +
+ '<li>Степень дроби — и числитель, и знаменатель: ' + M('<span class="bp">(</span>' + F('a','b') + '<span class="bp">)</span><sup>n</sup> = ' + F(S('a^n'),S('b^n'))) + '.</li>' +
  '<li>Складывать показатели разных оснований нельзя: ' + X('x^3 * y^5') + ' остаётся как есть.</li>' +
  '<li>' + X('(a + b)^2 ≠ a^2 + b^2') + ';  ' + X('(−2)^4 = 16') + ', ' + X('−2^4 = −16') + '.</li>' +
  '<li>Дополнительно: ' + X('a^0 = 1') + ' при a ≠ 0; 0⁰ не определяют.</li></ul>' +
