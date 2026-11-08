@@ -1,0 +1,1413 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Помогатор: степени</title>
+<style>
+:root{--bg:#f4f5f1;--card:#fff;--ink:#1e2723;--muted:#56625c;--line:#d3d9d4;--acc:#1f6b57;--acc2:#e6f1ec;--ok:#1d6b3a;--okbg:#e7f4eb;--bad:#9a3412;--badbg:#fbede5;--part:#7a5a00;--partbg:#fbf3d9;--hint:#eef2fa;--hintb:#3b5ba5}
+*{box-sizing:border-box}
+html{font-size:17px}
+body{margin:0;background:var(--bg);color:var(--ink);font:1rem/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.top{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:#fff;border-bottom:1px solid var(--line)}
+.top h1{flex:1;font-size:1.05rem;margin:0;text-align:center;line-height:1.2}
+main{max-width:780px;margin:0 auto;padding:1rem .8rem 2rem;outline:none}
+h2{font-size:1.35rem;margin:.4rem 0 .6rem}
+h3{font-size:1.1rem;margin:1rem 0 .4rem}
+p{margin:.5rem 0}
+.lead{font-size:1.05rem}
+.muted{color:var(--muted)}
+.small{font-size:.92rem}
+.btn{min-height:48px;padding:.55rem 1rem;border:1.5px solid var(--acc);background:#fff;color:var(--acc);border-radius:10px;font:inherit;font-weight:600;cursor:pointer;touch-action:manipulation}
+.btn.primary{background:var(--acc);color:#fff}
+.btn.ghost{border-color:#9aa59f;color:var(--ink)}
+.btn.sm{min-height:40px;padding:.35rem .7rem;font-size:.92rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,input:focus-visible,.fb:focus-visible,main:focus-visible{outline:3px solid #e0a800;outline-offset:2px}
+.btns{display:flex;flex-wrap:wrap;gap:.5rem;margin:.8rem 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.9rem 1rem;margin:.8rem 0}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.7rem}
+.tile{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:.9rem 1rem;font:inherit;color:inherit;cursor:pointer;min-height:96px}
+.tile b{display:block;font-size:1.08rem;color:var(--acc);margin-bottom:.2rem}
+.tile span{display:block;font-size:.92rem;color:var(--muted)}
+.tile em{display:block;font-style:normal;font-size:.85rem;margin-top:.35rem;color:var(--ink)}
+.tile:hover{border-color:var(--acc)}
+.m{font-family:"Cambria Math","STIX Two Math","Times New Roman",Times,serif;font-size:1.18em;white-space:nowrap}
+.m sup{font-size:.68em;line-height:0}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.25}
+.fr>.fn{border-bottom:1.5px solid currentColor;padding:0 .25em .08em;text-align:center}
+.fr>.fd{padding:.08em .25em 0;text-align:center}
+.prompt{font-size:1.45rem;text-align:center;padding:.7rem .5rem;background:var(--acc2);border-radius:10px;overflow-x:auto;margin:.3rem 0}
+.prompt .m{font-size:1.1em}
+.ask{font-weight:600}
+.inp{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.4rem;padding:.6rem 0;font-size:1.35rem}
+input.f{font:inherit;font-size:1.1rem;width:3.6em;min-height:46px;padding:.25rem;border:1.5px solid #7d8a83;border-radius:8px;text-align:center;background:#fff;color:var(--ink)}
+input.f:disabled{background:#f1f3f1}
+input.ex{width:2.7em;min-height:38px;font-size:.95rem;position:relative;top:-.7em;margin-left:1px}
+.mono-in{display:inline-flex;align-items:center;flex-wrap:wrap;gap:.3rem;justify-content:center}
+.vv{display:inline-flex;align-items:center;font-family:"Times New Roman",Times,serif;font-size:1.5rem;padding-top:.6em}
+.vl{padding-right:1px}
+.fr-in{display:inline-flex;flex-direction:column;align-items:center}
+.fr-in>.fn{border-bottom:2.5px solid var(--ink);padding:0 .3rem .4rem}
+.fr-in>.fd{padding:.4rem .3rem 0}
+.br{font-family:"Times New Roman",serif;font-size:2.4rem;line-height:1}
+.brsup{font-family:"Times New Roman",serif;font-size:1.2rem;align-self:flex-start;margin-top:.1rem}
+.note{font-size:.85rem;color:var(--muted);text-align:center;margin:.1rem 0 .3rem}
+.fb{border-radius:10px;padding:.15rem .85rem;margin:.6rem 0;outline:none}
+.fb:empty{display:none}
+.fb.ok{background:var(--okbg);border-left:6px solid var(--ok)}
+.fb.bad{background:var(--badbg);border-left:6px solid var(--bad)}
+.fb.part{background:var(--partbg);border-left:6px solid var(--part)}
+.fb.info{background:#f0f2f0;border-left:6px solid #7d8a83}
+.opt{display:block;width:100%;text-align:left;margin:.45rem 0;color:var(--ink);border-color:#9aa59f;font-weight:500}
+.opt[aria-pressed=true]{background:var(--acc2);border-color:var(--acc);font-weight:700}
+.opt.wrong{border-style:dashed}
+.opt.wrong::after{content:"  — не подходит";font-weight:400;color:var(--bad)}
+.opt.right::after{content:"  — подходит";font-weight:600;color:var(--ok)}
+.hint{background:var(--hint);border-left:5px solid var(--hintb);padding:.45rem .8rem;margin:.45rem 0;border-radius:8px}
+.sol{margin-top:.5rem}
+.sol:empty{display:none}
+.solbox{background:#fafaf7;border:1px dashed #9aa59f;border-radius:10px;padding:.5rem .9rem}
+.work{background:#fafaf7;border:1px solid var(--line);border-radius:10px;padding:.5rem .9rem}
+.work ol{margin:.3rem 0;padding-left:1.3rem}
+.work li{margin:.35rem 0}
+.prog{font-size:.9rem;color:var(--muted)}
+.bar{height:8px;background:#e1e6e2;border-radius:6px;overflow:hidden;margin:.3rem 0 .8rem}
+.bar i{display:block;height:100%;background:var(--acc)}
+.review{background:#fff7e6;border:1.5px solid #c99a2e;border-radius:12px;padding:.6rem .9rem;margin:.6rem 0}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border-bottom:1px solid var(--line);padding:.45rem .3rem;text-align:left;vertical-align:top}
+.tag{display:inline-block;font-size:.8rem;padding:.05rem .5rem;border-radius:20px;border:1px solid #9aa59f;margin-left:.3rem}
+.lvls{display:flex;flex-wrap:wrap;gap:.35rem}
+.lvls .btn{min-width:48px}
+.lvls .btn[aria-current=true]{background:var(--acc);color:#fff}
+.qnav{display:flex;flex-wrap:wrap;gap:.3rem}
+.qnav .btn{min-width:46px;padding:.3rem}
+.qnav .btn.has{background:var(--acc2)}
+.qnav .btn[aria-current=true]{outline:3px solid var(--acc)}
+.timer{font-weight:700;font-variant-numeric:tabular-nums}
+.formula{font-size:1.45rem;text-align:center;padding:.6rem;background:var(--acc2);border-radius:10px;margin:.3rem 0}
+.wrongbox{background:var(--badbg);border-radius:10px;padding:.4rem .8rem}
+details{margin:.4rem 0}
+summary{cursor:pointer;font-weight:600;min-height:40px;padding:.4rem 0}
+/* виджет сокращения */
+.cw{background:#fafaf7;border:1px solid var(--line);border-radius:12px;padding:.6rem;margin:.6rem 0;text-align:center}
+.cw-f{display:inline-flex;flex-direction:column;align-items:center;font-family:"Times New Roman",serif;font-size:1.6rem}
+.cw-row{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;padding:.15rem .4rem;min-height:2.4em}
+.cw-line{align-self:stretch;border-top:2.5px solid var(--ink);margin:.1rem 0}
+.tok{position:relative;display:inline-flex;flex-direction:column;align-items:center;min-width:1.05em;padding:0 .05em}
+.tok .pr{font:600 .7rem/1 system-ui,sans-serif;color:var(--muted);height:.8rem}
+.tok.gone .lt{color:#8a948f}
+.tok.gone .lt::after{content:"";position:absolute;left:-3px;right:-3px;top:.55em;border-top:2.5px solid var(--ink);transform:rotate(-35deg)}
+.dot{padding:0 .05em}
+.cw-msg{font-size:.95rem;margin:.4rem 0 0}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media (max-width:560px){.cmp{grid-template-columns:1fr}html{font-size:16px}.prompt{font-size:1.3rem}}
+/* памятка */
+.modal{position:fixed;inset:0;background:rgba(20,30,25,.45);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:1rem .5rem 4rem}
+.modal[hidden]{display:none}
+.panel{background:#fff;border-radius:14px;max-width:720px;width:100%;max-height:calc(100vh - 5.5rem);overflow:auto;padding:1rem 1.1rem}
+.panel ul{padding-left:1.2rem}
+.panel li{margin:.3rem 0}
+.ptab td,.ptab th{padding:.3rem}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="btn sm ghost" id="homeBtn" type="button">Главная</button>
+  <h1>Помогатор: степени</h1>
+  <button class="btn sm" id="memoBtn" type="button" aria-haspopup="dialog">Памятка</button>
+</header>
+<main id="app" tabindex="-1"><p>Загрузка… Если этот текст не исчезает, в браузере выключен JavaScript.</p></main>
+<div id="memo" class="modal" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="memoTitle" tabindex="-1">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem">
+      <h2 id="memoTitle" style="margin:0">Памятка</h2>
+      <button class="btn sm" id="memoClose" type="button">Закрыть</button>
+    </div>
+    <div id="memoBody"></div>
+  </div>
+</div>
+<script>
+'use strict';
+/* ===================== Сохранение ===================== */
+var KEY = 'pomogator-stepeni-v1';
+function defaults(){ return {lessons:{}, cards:{}, level:1, maxLevel:1, streak:0, skills:{}, errors:{}, fixed:{}, recent:[], tests:[], chooseBest:0, together:{}, timerOn:false}; }
+var storageOK = true;
+var D = (function(){
+  var d = defaults();
+  try {
+    localStorage.setItem(KEY + '-test', '1'); localStorage.removeItem(KEY + '-test');
+    var s = localStorage.getItem(KEY);
+    if (s) { var o = JSON.parse(s); for (var k in o) if (k in d) d[k] = o[k]; }
+  } catch (e) { storageOK = false; }
+  return d;
+})();
+function save(){ if (!storageOK) return; try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) { storageOK = false; } }
+
+/* ===================== Мелкие помощники ===================== */
+function ri(a,b){ return a + Math.floor(Math.random()*(b-a+1)); }
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function shuffle(a){ a = a.slice(); for (var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ var t=a%b; a=b; b=t; } return a; }
+function ipow(b,e){ var r=1; for (var i=0;i<e;i++) r*=b; return r; }
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function $(s,r){ return (r||document).querySelector(s); }
+function $$(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+
+/* ===================== Запись формул ===================== */
+// S('a^2b^{m+n}*c') -> a<sup>2</sup>b<sup>m+n</sup> · c
+function S(s){ return String(s).replace(/\^\{([^}]*)\}/g,'<sup>$1</sup>').replace(/\^(\d+|[a-zA-Z])/g,'<sup>$1</sup>').replace(/\*/g,' · '); }
+function M(x){ return '<span class="m">' + x + '</span>'; }
+function X(s){ return M(S(s)); }
+function P(b,e){ return (e===1||e==='1') ? String(b) : b + '<sup>' + e + '</sup>'; }
+function F(n,d){ return '<span class="fr"><span class="fn">' + n + '</span><span class="fd">' + d + '</span></span>'; }
+function num(n){ return n < 0 ? '−' + (-n) : String(n); }
+function mono(c,e,order){
+  order = order || Object.keys(e);
+  var vs = order.filter(function(v){ return e[v] > 0; });
+  var s = '';
+  if (c === -1 && vs.length) s = '−';
+  else if (c !== 1 || !vs.length) s = num(c);
+  vs.forEach(function(v){ s += P(v, e[v]); });
+  return s;
+}
+function word(n, one, few, many){ var a=n%10, b=n%100; if (a===1&&b!==11) return one; if (a>=2&&a<=4&&(b<12||b>14)) return few; return many; }
+
+var RULE = {
+  mult: 'Правило: ' + X('a^m * a^n = a^{m+n}') + '. Основания одинаковые, степени умножаются — показатели складываются.',
+  div: 'Правило: ' + M(F(S('a^m'),S('a^n')) + ' = ' + S('a^{m−n}')) + ', a ≠ 0. Показатели вычитаются. Если в знаменателе множителей больше, остаток остаётся в знаменателе.',
+  pp: 'Правило: ' + X('(a^m)^n = a^{m·n}') + '. Степень в степени — показатели перемножаются.',
+  prod: 'Правило: ' + X('(ab)^n = a^nb^n') + '. Внешняя степень действует на каждый множитель в скобке, включая число.',
+  frac: 'Правило: ' + M('(' + F('a','b') + ')<sup>n</sup> = ' + F(S('a^n'),S('b^n'))) + ', b ≠ 0. В степень возводятся и числитель, и знаменатель.',
+  zero: 'Правило: ' + X('a^0 = 1') + ' при a ≠ 0. Например, ' + M(F(S('a^3'),S('a^3'))) + ' = 1, а по правилу деления это ' + X('a^{3−3} = a^0') + '.',
+  traps: 'Помни: правило ' + X('(ab)^n = a^nb^n') + ' — только для произведения, не для суммы. Минус входит в основание, только если он стоит внутри скобок: ' + X('(−2)^4') + ' и ' + X('−2^4') + ' — разные выражения.',
+  inv: 'Обратное применение: ' + X('a^nb^n = (ab)^n') + ' и ' + X('a^{mn} = (a^m)^n') + '. Число тоже нужно записать как степень с тем же показателем.',
+  num: 'Разложи числа на простые множители (например, 10 = 2·5, 27 = 3³), затем сократи степени с одинаковыми основаниями.',
+  mixed: 'Делай по одному действию: сначала раскрой скобки со степенями, потом умножай или сокращай степени с одинаковыми основаниями.'
+};
+var SKILLS = {mult:'Умножение степеней', div:'Деление степеней', pp:'Степень в степени', prod:'Степень произведения', frac:'Степень дроби', inv:'Запись в виде степени (обратно)', num:'Разложение чисел и сокращение', mixed:'Несколько правил сразу', zero:'Нулевой показатель', traps:'Ловушки: минус и сумма'};
+var DEFAULT_HINTS = {
+  mult:['Какие основания здесь одинаковые? Какое действие стоит между степенями?', RULE.mult, 'Запиши одно основание, а показатели через знак «+».'],
+  div:['Какие основания одинаковые в числителе и знаменателе? Где множителей больше?', RULE.div, 'Сократи пары одинаковых множителей и посчитай, сколько осталось и где.'],
+  pp:['Здесь степени умножаются или степень возводится в степень?', RULE.pp, 'Перемножь показатели: внутренний и внешний.'],
+  prod:['Какие множители стоят внутри скобки? Перечисли их все, включая число.', RULE.prod, 'Возведи в степень каждый множитель отдельно.'],
+  frac:['Что стоит в числителе, а что в знаменателе?', RULE.frac, 'Возведи в степень отдельно числитель и отдельно знаменатель.'],
+  zero:['Что получится, если степень разделить на такую же степень?', RULE.zero, 'Любое число, кроме нуля, в нулевой степени равно 1.'],
+  traps:['Что стоит в скобках: произведение или сумма? Входит ли минус в скобки?', RULE.traps, 'Сначала посчитай то, что в скобках, потом возводи в степень.'],
+  inv:['Какой показатель должен получиться у каждого множителя после возведения в степень?', RULE.inv, 'Запиши число и каждую букву как степень с нужным показателем.'],
+  num:['На какие простые множители раскладываются числа в задании?', RULE.num, 'Запиши каждое число как степень простого числа или произведение степеней.'],
+  mixed:['Какое действие нужно сделать первым?', RULE.mixed, 'Сначала избавься от скобок со степенями.']
+};
+
+/* Типы ошибок: название, карточка для повторения, генераторы похожих заданий */
+var CATS = {
+  add_mult:{t:'Путаю: складывать или перемножать показатели', card:'pp', gens:['cmp','mult1','pp1','pp2']},
+  coef_forgot:{t:'Забываю возвести число в степень', card:'prod', gens:['prod2','fracpow','prodBig']},
+  diff_bases:{t:'Складываю показатели у разных оснований', card:'mult', gens:['diff','recip','mult3']},
+  remainder:{t:'Путаю, где остаются множители после сокращения', card:'div', gens:['divLess','numdec']},
+  div_sub:{t:'Ошибаюсь при делении степеней', card:'div', gens:['div1','div2']},
+  inv_coef:{t:'Забываю про число при записи в виде степени', card:'prod', gens:['inv2']},
+  unfinished:{t:'Не довожу преобразование до конца', card:'prod', gens:['inv2','divLess','numdec']},
+  sum_pow:{t:'Возвожу сумму в степень по частям', card:'traps', gens:['sum']},
+  minus:{t:'Путаю (−2)⁴ и −2⁴', card:'traps', gens:['minus']},
+  calc:{t:'Ошибки в вычислении чисел', card:null, gens:['mult2','prod2','numdec']},
+  'skill:mult':{t:'Умножение степеней', card:'mult', gens:['mult1','mult2','mult3']},
+  'skill:div':{t:'Деление степеней', card:'div', gens:['div1','div2','divLess']},
+  'skill:pp':{t:'Степень в степени', card:'pp', gens:['pp1','pp2']},
+  'skill:prod':{t:'Степень произведения', card:'prod', gens:['prod1','prod2','prodBig']},
+  'skill:frac':{t:'Степень дроби', card:'frac', gens:['fracpow','recip']},
+  'skill:inv':{t:'Запись в виде степени', card:'prod', gens:['inv1','inv2']},
+  'skill:num':{t:'Разложение чисел и сокращение', card:'prod', gens:['numdec','numdec2']},
+  'skill:mixed':{t:'Несколько правил сразу', card:'pp', gens:['mixed','pp2']},
+  'skill:zero':{t:'Нулевой показатель', card:'zero', gens:['zero']},
+  'skill:traps':{t:'Ловушки: минус и сумма', card:'traps', gens:['minus','sum']}
+};
+
+/* ===================== Задание ===================== */
+function T(o){
+  o.skill = o.skill || 'mixed';
+  o.cat = o.cat || ('skill:' + o.skill);
+  o.vars = o.vars || [];
+  if (o.coef === undefined) o.coef = true;
+  var dh = DEFAULT_HINTS[o.skill] || DEFAULT_HINTS.mixed;
+  o.hints = o.hints || dh.slice();
+  while (o.hints.length < 3) o.hints.push(dh[o.hints.length]);
+  o.ansHtml = o.ansHtml || ansHtml(o);
+  o.solution = o.solution || ('<p>Ответ: ' + o.ansHtml + '</p>');
+  o.ask = o.ask || '';
+  o.simGen = o.simGen || o.gen;
+  return o;
+}
+function ansHtml(t){
+  var a = t.ans;
+  switch (t.type) {
+    case 'mono': return M(mono(a.c, a.e, t.vars));
+    case 'frac': return M(F(mono(a.n.c, a.n.e, t.vars), mono(a.d.c, a.d.e, t.vars)));
+    case 'nfrac': return M(a.d === 1 ? num(a.n) : F(num(a.n), num(a.d)));
+    case 'int': return M(num(a));
+    case 'powprod': return M('(' + mono(a.k, a.e, t.vars) + ')<sup>' + t.N + '</sup>');
+    case 'choice': return t.opts.filter(function(x){return x.ok;}).map(function(x){return x.html;}).join(' или ');
+  }
+  return '';
+}
+function CH(o){ // варианты: [html, верно?, пояснение, категория]
+  o.type = 'choice';
+  o.opts = o.opts.map(function(x,i){ return {id:'o'+i, html:x[0], ok:!!x[1], fb:x[2]||'', cat:x[3]}; });
+  if (o.mix) o.opts = shuffle(o.opts);
+  return T(o);
+}
+function IN(o){ // целое число; o.d = {значение:[сообщение, категория]}
+  o.type = 'int';
+  var d = o.d || {};
+  var extra = o.diag;
+  o.diag = function(u){ var r = d[u.v]; if (r) return {msg:r[0], cat:r[1]||o.cat}; return extra ? extra(u) : null; };
+  return T(o);
+}
+
+/* ===================== Поля ввода ===================== */
+function fld(name, label, ph, cls, signed){
+  return '<input class="f ' + (cls||'') + '" data-f="' + name + '" aria-label="' + esc(label) + '" placeholder="' + (ph||'') + '" inputmode="' + (signed?'text':'numeric') + '" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done">';
+}
+function monoUI(pre, vars, coef, label){
+  var s = '<span class="mono-in">';
+  if (coef) s += fld(pre+'c', label + ': число (пустое поле — 1)', '1', 'cf');
+  vars.forEach(function(v){ s += '<span class="vv"><span class="vl">' + v + '</span>' + fld(pre+'e_'+v, label + ': показатель у ' + v + ' (пустое поле — буквы нет)', '', 'ex') + '</span>'; });
+  return s + '</span>';
+}
+function inputUI(t){
+  switch (t.type) {
+    case 'mono': return monoUI('', t.vars, t.coef, 'Ответ');
+    case 'frac': return '<span class="fr-in"><span class="fn">' + monoUI('n', t.vars, true, 'Числитель') + '</span><span class="fd">' + monoUI('d', t.vars, true, 'Знаменатель') + '</span></span>';
+    case 'nfrac': return '<span class="fr-in"><span class="fn">' + fld('n','Числитель','') + '</span><span class="fd">' + fld('d','Знаменатель (пустое поле — 1)','1') + '</span></span>';
+    case 'int': return fld('v','Ответ','', 'wide', t.sign) + (t.sign ? ' <button class="btn sm ghost" type="button" data-a="sign" aria-label="Поставить или убрать минус">± минус</button>' : '');
+    case 'powprod': return '<span class="mono-in">' + fld('o','Число перед скобкой (оставь пустым, если его нет)','','cf') + '<span class="br">(</span>' + monoUI('i', t.vars, true, 'Внутри скобки') + '<span class="br">)</span><span class="brsup">' + t.N + '</span></span>';
+    case 'choice': return '<div style="width:100%">' + t.opts.map(function(o){ return '<button class="btn opt" type="button" data-opt="' + o.id + '" aria-pressed="false">' + o.html + '</button>'; }).join('') + '</div>';
+  }
+  return '';
+}
+function noteFor(t){
+  if (t.type === 'mono' || t.type === 'frac' || t.type === 'powprod') return '<p class="note">Показатели вписывай в маленькие поля у букв. Пустое поле показателя — буквы в ответе нет, показатель 1 впиши как 1. Пустое поле числа — это 1.</p>';
+  if (t.type === 'nfrac') return '<p class="note">Если ответ — целое число, знаменатель можно оставить пустым.</p>';
+  return '';
+}
+function readVals(root){
+  var v = {};
+  $$('input.f', root).forEach(function(i){ v[i.dataset.f] = i.value; });
+  var p = $('.opt[aria-pressed=true]', root); if (p) v.choice = p.dataset.opt;
+  return v;
+}
+function fillVals(root, v){
+  if (!v) return;
+  $$('input.f', root).forEach(function(i){ if (v[i.dataset.f] != null) i.value = v[i.dataset.f]; });
+  if (v.choice) { var b = $('.opt[data-opt="' + v.choice + '"]', root); if (b) b.setAttribute('aria-pressed','true'); }
+}
+function readInt(s, blank){
+  s = String(s == null ? '' : s).replace(/[−–—]/g,'-').replace(/\s+/g,'');
+  if (s === '') return blank;
+  if (!/^-?\d{1,12}$/.test(s)) return NaN;
+  return parseInt(s, 10);
+}
+function readMono(vals, pre, vars, coef){
+  var empty = true;
+  function raw(k){ var s = (vals[pre+k] || '').trim(); if (s) empty = false; return s; }
+  var c = 1;
+  if (coef) { c = readInt(raw('c'), 1); if (isNaN(c)) return {err:'В поле для числа можно вписать только целое число.'}; }
+  var e = {};
+  for (var i=0;i<vars.length;i++) {
+    var v = vars[i], x = readInt(raw('e_'+v), 0);
+    if (isNaN(x) || x < 0) return {err:'Показатель у ' + v + ' — целое неотрицательное число.'};
+    e[v] = x;
+  }
+  return {c:c, e:e, empty:empty};
+}
+
+/* ===================== Проверка ===================== */
+function evalTask(t, vals){
+  var A = t.ans, d, u, ok;
+  if (t.type === 'choice') {
+    if (!vals.choice) return {st:'empty'};
+    var o = t.opts.filter(function(x){ return x.id === vals.choice; })[0];
+    if (o.ok) return {st:'ok', msg:o.fb};
+    return {st:'bad', msg:o.fb || 'Этот вариант не подходит. Посмотри на задание ещё раз.', cat:o.cat || t.cat};
+  }
+  if (t.type === 'int') {
+    if (!(vals.v||'').trim()) return {st:'empty'};
+    var v = readInt(vals.v, null);
+    if (isNaN(v)) return {st:'invalid', msg:'Впиши целое число, например 16 или −16.'};
+    if (v === A) return {st:'ok'};
+    d = t.diag && t.diag({v:v});
+    return {st:'bad', msg:d ? d.msg : (t.wrong || 'Число не совпадает с верным ответом. Проверь вычисление по шагам.'), cat:d ? d.cat : t.cat};
+  }
+  if (t.type === 'mono') {
+    u = readMono(vals, '', t.vars, t.coef);
+    if (u.err) return {st:'invalid', msg:u.err};
+    if (u.empty) return {st:'empty'};
+    var cOk = u.c === A.c;
+    var wrongV = t.vars.filter(function(x){ return (u.e[x]||0) !== (A.e[x]||0); });
+    if (cOk && !wrongV.length) return {st:'ok'};
+    var parts = [];
+    if (t.coef && cOk && A.c !== 1) parts.push('Число найдено верно.');
+    if (!cOk && !wrongV.length) parts.push('Показатели найдены верно. Ошибка в числовом коэффициенте.');
+    else if (wrongV.length && wrongV.length < t.vars.length) parts.push('Показатель у ' + t.vars.filter(function(x){return wrongV.indexOf(x)<0;}).join(', ') + ' верный. Проверь показатель у ' + wrongV.join(', ') + '.');
+    else if (wrongV.length) parts.push(t.vars.length > 1 ? 'Проверь показатели у всех букв.' : 'Проверь показатель.');
+    d = t.diag && t.diag(u);
+    return {st:'bad', msg:parts.join(' ') + (d ? ' ' + d.msg : ''), cat:d ? d.cat : t.cat};
+  }
+  if (t.type === 'frac' || t.type === 'nfrac') {
+    var n, dn, vars = t.type === 'frac' ? t.vars : [];
+    if (t.type === 'frac') {
+      n = readMono(vals, 'n', vars, true); dn = readMono(vals, 'd', vars, true);
+      if (n.err) return {st:'invalid', msg:'Числитель: ' + n.err};
+      if (dn.err) return {st:'invalid', msg:'Знаменатель: ' + dn.err};
+      if (n.empty && dn.empty) return {st:'empty'};
+    } else {
+      if (!(vals.n||'').trim()) return {st:'empty'};
+      var nn = readInt(vals.n, null), dd = readInt(vals.d, 1);
+      if (isNaN(nn) || isNaN(dd)) return {st:'invalid', msg:'В числитель и знаменатель впиши целые числа.'};
+      n = {c:nn, e:{}}; dn = {c:dd, e:{}};
+    }
+    if (dn.c === 0) return {st:'invalid', msg:'Знаменатель не может быть равен 0.'};
+    var an = t.type === 'frac' ? A.n : {c:A.n, e:{}}, ad = t.type === 'frac' ? A.d : {c:A.d, e:{}};
+    var eq = n.c * ad.c === an.c * dn.c && vars.every(function(x){ return (n.e[x]||0) - (dn.e[x]||0) === (an.e[x]||0) - (ad.e[x]||0); });
+    var g = gcd(n.c, dn.c);
+    var both = vars.filter(function(x){ return n.e[x] > 0 && dn.e[x] > 0; });
+    if (eq) {
+      if (g === 1 && dn.c > 0 && !both.length) return {st:'ok'};
+      var why = both.length ? 'буква ' + both.join(', ') + ' осталась и в числителе, и в знаменателе — сократи её.' : (dn.c < 0 ? 'перенеси минус из знаменателя в числитель.' : 'числитель и знаменатель ещё можно сократить на ' + g + '.');
+      return {st:'part', msg:'По значению это верно, но преобразование не закончено: ' + why, cat:'unfinished'};
+    }
+    d = t.diag && t.diag({n:n, d:dn});
+    var p2 = [];
+    var nOk = n.c === an.c && vars.every(function(x){ return (n.e[x]||0) === (an.e[x]||0); });
+    var dOk = dn.c === ad.c && vars.every(function(x){ return (dn.e[x]||0) === (ad.e[x]||0); });
+    if (nOk && !dOk) p2.push('Числитель верный. Ошибка в знаменателе.');
+    if (dOk && !nOk) p2.push('Знаменатель верный. Ошибка в числителе.');
+    // перепутаны числитель и знаменатель
+    var swapped = n.c * an.c === ad.c * dn.c && vars.every(function(x){ return (n.e[x]||0) - (dn.e[x]||0) === (ad.e[x]||0) - (an.e[x]||0); });
+    if (!d && swapped) d = {msg:'Похоже, числитель и знаменатель поменялись местами. Оставшиеся множители остаются там, где их было больше.', cat:'remainder'};
+    return {st:'bad', msg:p2.join(' ') + (d ? ' ' + d.msg : (p2.length ? '' : 'Значение не совпадает. Проверь каждый множитель по шагам.')), cat:d ? d.cat : t.cat};
+  }
+  if (t.type === 'powprod') {
+    var o2 = readInt((vals.o||'').trim(), 1);
+    if (isNaN(o2)) return {st:'invalid', msg:'Перед скобкой может стоять только целое число (или ничего).'};
+    u = readMono(vals, 'i', t.vars, true);
+    if (u.err) return {st:'invalid', msg:u.err};
+    if (u.empty && !(vals.o||'').trim()) return {st:'empty'};
+    var N = t.N, TG = t.target;
+    eq = o2 * ipow(u.c, N) === TG.c && t.vars.every(function(x){ return (u.e[x]||0) * N === (TG.e[x]||0); });
+    if (eq && o2 === 1) return {st:'ok'};
+    if (eq) return {st:'part', msg:'Верно, но преобразование не закончено: перед скобкой осталось число ' + o2 + '. Его тоже нужно записать как ' + (N===2?'квадрат':'куб') + ' и внести в скобку, чтобы получилась одна степень.', cat:'unfinished'};
+    var lettersOk = t.vars.every(function(x){ return (u.e[x]||0) * N === (TG.e[x]||0); });
+    var msg;
+    if (lettersOk) {
+      if (u.c === 1 && o2 === 1) { msg = 'Буквы записаны верно. Но число ' + TG.c + ' тоже нужно внести в скобку: ' + TG.c + ' = ' + A.k + '<sup>' + N + '</sup>.'; return {st:'bad', msg:msg, cat:'inv_coef'}; }
+      if (u.c === TG.c) { msg = 'Буквы записаны верно. Но внутри скобки число тоже возводится в степень: ' + TG.c + '<sup>' + N + '</sup> — это уже не ' + TG.c + '. Нужно число, которое в ' + (N===2?'квадрате':'кубе') + ' даёт ' + TG.c + '.'; return {st:'bad', msg:msg, cat:'inv_coef'}; }
+      return {st:'bad', msg:'Буквы записаны верно. Ошибка в числе: какое число в степени ' + N + ' даёт ' + TG.c + '?', cat:'inv_coef'};
+    }
+    var same = t.vars.filter(function(x){ return (u.e[x]||0) === (TG.e[x]||0); });
+    var minus = t.vars.filter(function(x){ return (u.e[x]||0) === (TG.e[x]||0) - N; });
+    if (same.length) msg = 'Показатель у ' + same.join(', ') + ' внутри скобки после возведения в степень ' + N + ' умножится на ' + N + '. Внутри нужен показатель в ' + N + ' раза меньше.';
+    else if (minus.length) msg = 'Похоже, из показателя вычли ' + N + '. Но степень в степени перемножает показатели, поэтому показатель нужно разделить на ' + N + '.';
+    else msg = 'Проверь показатели: каждый показатель внутри скобки, умноженный на ' + N + ', должен дать показатель в задании.';
+    var numOk = o2 === 1 && ipow(u.c, N) === TG.c;
+    return {st:'bad', msg:(numOk ? 'Число записано верно. ' : '') + msg, cat:'add_mult'};
+  }
+  return {st:'empty'};
+}
+function userHtml(t, vals){
+  if (!vals) return '—';
+  var r = evalTask(t, vals);
+  if (r.st === 'empty') return '—';
+  if (r.st === 'invalid') return esc(Object.keys(vals).map(function(k){return vals[k];}).join(' '));
+  switch (t.type) {
+    case 'choice': return t.opts.filter(function(x){return x.id===vals.choice;})[0].html;
+    case 'int': return M(num(readInt(vals.v)));
+    case 'mono': var u = readMono(vals,'',t.vars,t.coef); return M(mono(u.c,u.e,t.vars));
+    case 'frac': var n = readMono(vals,'n',t.vars,true), d = readMono(vals,'d',t.vars,true); return M(F(mono(n.c,n.e,t.vars), mono(d.c,d.e,t.vars)));
+    case 'nfrac': var a = readInt(vals.n), b = readInt(vals.d,1); return M(b===1 ? num(a) : F(num(a),num(b)));
+    case 'powprod': var o = readInt((vals.o||'').trim(),1), w = readMono(vals,'i',t.vars,true); return M((o!==1?num(o):'') + '(' + mono(w.c,w.e,t.vars) + ')<sup>' + t.N + '</sup>');
+  }
+  return '—';
+}
+
+/* ===================== Показ результата ===================== */
+function reveal(el){
+  if (!el) return;
+  try { el.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'center'}); } catch (e) { el.scrollIntoView(); }
+  try { el.focus({preventScroll:true}); } catch (e) { el.focus(); }
+}
+function fbHtml(r, t){
+  if (r.msg) r.msg = String(r.msg).trim();
+  if (r.st === 'ok') return '<p><b>✓ Верно.</b> ' + (r.msg || '') + ' ' + (t && t.explain ? t.explain : '') + '</p>';
+  if (r.st === 'part') return '<p><b>≈ Верно, но не закончено.</b> ' + r.msg + '</p>';
+  if (r.st === 'bad') return '<p><b>✗ Пока не так.</b> ' + r.msg + '</p>';
+  if (r.st === 'invalid') return '<p><b>Проверь запись.</b> ' + r.msg + '</p>';
+  return '<p>Сначала впиши ответ или выбери вариант.</p>';
+}
+var HL = ['Наводящий вопрос', 'Правило', 'Следующий шаг'];
+
+/* ===================== Запуск одного задания ===================== */
+// o: {hints:true, onOk(t,info), onBad(t,res), next:{label, fn}, similar(t), afterSolution(t)}
+function runTask(box, t, o){
+  o = o || {};
+  var hints = o.hints !== false;
+  box.innerHTML = '<div class="task">' +
+    (t.prompt ? '<div class="prompt">' + t.prompt + '</div>' : '') +
+    (t.ask ? '<p class="ask">' + t.ask + '</p>' : '') +
+    '<div class="inp">' + inputUI(t) + '</div>' + noteFor(t) +
+    '<div class="btns">' + (t.type !== 'choice' ? '<button class="btn primary" type="button" data-a="check">Проверить</button>' : '') +
+    (hints ? '<button class="btn" type="button" data-a="hint">Подсказка 1 из 3</button><button class="btn ghost" type="button" data-a="sol">Показать решение</button>' : '') + '</div>' +
+    '<div class="hints"></div><div class="fb" tabindex="-1" role="status" aria-live="polite"></div><div class="sol"></div><div class="next btns"></div></div>';
+  var root = $('.task', box), fb = $('.fb', root), hl = 0, tries = 0, done = false, solSeen = false, cats = {};
+  function show(r){ fb.className = 'fb ' + (r.st === 'ok' ? 'ok' : r.st === 'part' ? 'part' : r.st === 'bad' ? 'bad' : 'info'); fb.innerHTML = fbHtml(r, t); reveal(fb); }
+  function check(){
+    if (done) return;
+    var r = evalTask(t, readVals(root));
+    if (r.st === 'ok') {
+      done = true;
+      $$('input.f', root).forEach(function(i){ i.disabled = true; });
+      $$('.opt', root).forEach(function(b){ if (b.getAttribute('aria-pressed') === 'true') b.classList.add('right'); });
+      var ch = $('[data-a=check]', root); if (ch) ch.disabled = true;
+      show(r);
+      var nx = $('.next', root);
+      if (o.next) { nx.innerHTML = '<button class="btn primary" type="button" data-a="next">' + o.next.label + '</button>'; }
+      if (o.onOk) o.onOk(t, {clean: tries === 0 && hl === 0 && !solSeen, tries:tries, hints:hl, solSeen:solSeen, box:root});
+      return;
+    }
+    if (r.st === 'bad' || r.st === 'part') {
+      tries++;
+      var p = $('.opt[aria-pressed=true]', root); if (p) { p.classList.add('wrong'); p.setAttribute('aria-pressed','false'); }
+      if (o.onBad && !cats[r.cat]) { cats[r.cat] = 1; o.onBad(t, r, tries); }
+    }
+    show(r);
+  }
+  root.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b || !root.contains(b)) return;
+    if (b.dataset.opt) {
+      if (done) return;
+      $$('.opt', root).forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+      b.setAttribute('aria-pressed','true');
+      check(); return;
+    }
+    var a = b.dataset.a;
+    if (a === 'check') check();
+    else if (a === 'sign') { var inp = $('input[data-f=v]', root); var s = inp.value.trim().replace(/^[−-]/, function(){ return ''; }); inp.value = /^[−-]/.test(inp.value.trim()) ? s : '−' + s; inp.focus(); }
+    else if (a === 'hint') {
+      if (hl >= 3) return;
+      hl++;
+      var hd = document.createElement('div'); hd.className = 'hint'; hd.tabIndex = -1;
+      hd.innerHTML = '<b>Подсказка ' + hl + ' — ' + HL[hl-1].toLowerCase() + ':</b> ' + t.hints[hl-1];
+      $('.hints', root).appendChild(hd);
+      b.textContent = hl < 3 ? 'Подсказка ' + (hl+1) + ' из 3' : 'Подсказки закончились';
+      if (hl >= 3) b.disabled = true;
+      reveal(hd);
+    }
+    else if (a === 'sol') {
+      solSeen = true;
+      var sb = $('.sol', root);
+      sb.innerHTML = '<div class="solbox" tabindex="-1"><h3>Полное решение</h3>' + t.solution + '<p><b>Ответ:</b> ' + t.ansHtml + '</p>' +
+        (o.similar ? '<p class="small">Теперь попробуй решить похожее задание сама — так правило лучше запомнится.</p><div class="btns"><button class="btn primary" type="button" data-a="similar">Решить похожее задание</button></div>' : '') + '</div>';
+      mountWidgets(sb);
+      b.disabled = true;
+      if (o.afterSolution) o.afterSolution(t);
+      reveal($('.solbox', sb));
+    }
+    else if (a === 'similar') o.similar(t);
+    else if (a === 'next') o.next.fn();
+  });
+  root.addEventListener('keydown', function(e){ if (e.key === 'Enter' && e.target.matches('input.f')) { e.preventDefault(); check(); } });
+  mountWidgets(root);
+  return {check:check};
+}
+
+/* ===================== Виджеты ===================== */
+function mountWidgets(root){
+  $$('.w[data-w]', root).forEach(function(el){ if (el.dataset.ready) return; el.dataset.ready = '1'; if (el.dataset.w === 'cancel') wCancel(el); else if (el.dataset.w === 'compare') wCompare(el); });
+}
+function W(name, attrs){ var s = '<div class="w" data-w="' + name + '"'; for (var k in (attrs||{})) s += ' data-' + k + '="' + attrs[k] + '"'; return s + '></div>'; }
+function wCancel(el){
+  var b = el.dataset.b, m = +el.dataset.m, n = +el.dataset.n, k = Math.min(m,n), c = 0;
+  el.innerHTML = '<div class="cw"><p class="small">Запишем степени как произведения одинаковых множителей. Пару «множитель сверху и множитель снизу» можно сократить: ' + M(F(b,b)) + ' = 1. Сокращённые множители зачёркнуты, под каждой парой — одинаковый номер.</p>' +
+    '<div class="cw-f" aria-hidden="true"><div class="cw-row" data-r="n"></div><div class="cw-line"></div><div class="cw-row" data-r="d"></div></div>' +
+    '<div class="btns" style="justify-content:center"><button class="btn" type="button" data-c="one">Сократить одну пару</button><button class="btn ghost" type="button" data-c="all">Сократить все пары</button><button class="btn ghost" type="button" data-c="reset">Сначала</button></div>' +
+    '<p class="cw-msg" tabindex="-1" aria-live="polite"></p></div>';
+  function row(cnt){ var s = ''; for (var i=0;i<cnt;i++) s += (i ? '<span class="dot">·</span>' : '') + '<span class="tok' + (i<c ? ' gone' : '') + '"><span class="lt">' + b + '</span><span class="pr">' + (i<c ? (i+1) : '') + '</span></span>'; return s; }
+  function draw(){
+    $('[data-r=n]', el).innerHTML = row(m); $('[data-r=d]', el).innerHTML = row(n);
+    var msg = $('.cw-msg', el), txt;
+    if (c === 0) txt = 'Сверху ' + m + ' ' + word(m,'множитель','множителя','множителей') + ' ' + b + ', снизу ' + n + '. Можно сократить ' + k + ' ' + word(k,'пару','пары','пар') + '.';
+    else if (c < k) txt = 'Сокращено пар: ' + c + ' из ' + k + '. Каждая пара даёт 1.';
+    else if (m > n) txt = 'Все ' + k + ' ' + word(k,'пара','пары','пар') + ' сокращены. В числителе осталось ' + (m-n) + ' ' + word(m-n,'множитель','множителя','множителей') + ' ' + b + ', в знаменателе — 1. Результат: ' + X(b + '^{' + (m-n) + '}') + ' (то есть ' + X(b + '^{' + m + '−' + n + '}') + ').';
+    else if (m < n) txt = 'Все ' + k + ' ' + word(k,'пара','пары','пар') + ' сокращены. В числителе не осталось ни одного ' + b + ', но там не ноль: каждая пара ' + M(F(b,b)) + ' = 1, а 1·1·…·1 = 1. В знаменателе осталось ' + (n-m) + ' ' + word(n-m,'множитель','множителя','множителей') + '. Результат: ' + M(F('1', P(b, n-m))) + '.';
+    else txt = 'Все пары сокращены, остались только единицы: результат 1.';
+    msg.innerHTML = txt;
+    $('[data-c=one]', el).disabled = c >= k; $('[data-c=all]', el).disabled = c >= k;
+    el.setAttribute('aria-label', 'Сокращение: ' + msg.textContent);
+  }
+  el.addEventListener('click', function(e){ var bt = e.target.closest('button[data-c]'); if (!bt) return;
+    if (bt.dataset.c === 'one') c = Math.min(k, c+1); else if (bt.dataset.c === 'all') c = k; else c = 0;
+    draw(); if (c === k) reveal($('.cw-msg', el)); });
+  draw();
+}
+function wCompare(el){
+  var items = [
+    {e:'a^3 * a^2', act:'mul', q2:'add', exp:'(a·a·a) · (a·a) = a^5', w:'Это умножение двух степеней: показатели складываются, 3 + 2 = 5.'},
+    {e:'(a^3)^2', act:'pow', q2:'times', exp:'(a·a·a) · (a·a·a) = a^6', w:'Это степень в степени: a³ повторяется 2 раза, показатели перемножаются, 3 · 2 = 6.'}];
+  el.innerHTML = '<div class="cmp">' + items.map(function(it,i){
+    return '<div class="card" data-i="' + i + '" style="margin:0"><div class="prompt">' + X(it.e) + '</div>' +
+      '<p class="ask">1. Какое здесь действие?</p><div data-q="1"><button class="btn opt" type="button" data-v="mul">Умножаем две степени</button><button class="btn opt" type="button" data-v="pow">Возводим степень в степень</button></div>' +
+      '<div data-s="2" hidden><p class="ask">2. Что делаем с показателями?</p><div data-q="2"><button class="btn opt" type="button" data-v="add">Складываем</button><button class="btn opt" type="button" data-v="times">Перемножаем</button></div></div>' +
+      '<div class="fb" tabindex="-1" aria-live="polite"></div></div>'; }).join('') + '</div>';
+  el.addEventListener('click', function(e){
+    var b = e.target.closest('button[data-v]'); if (!b) return;
+    var col = b.closest('[data-i]'), it = items[+col.dataset.i], q = b.parentNode.dataset.q, fb = $('.fb', col);
+    if (q === '1') {
+      if (b.dataset.v === it.act) { b.classList.add('right'); $$('[data-q="1"] button', col).forEach(function(x){ x.disabled = true; }); $('[data-s="2"]', col).hidden = false; fb.className = 'fb ok'; fb.innerHTML = '<p>Верно. ' + (it.act === 'mul' ? 'Между двумя степенями стоит знак умножения.' : 'Вся степень a³ стоит в скобках и возводится в квадрат.') + '</p>'; }
+      else { b.classList.add('wrong'); fb.className = 'fb bad'; fb.innerHTML = '<p>Пока не так. ' + (it.act === 'mul' ? 'Скобок со степенью здесь нет: две степени стоят рядом и перемножаются.' : 'Здесь степень a³ целиком стоит в скобках, и на неё действует внешний показатель 2.') + '</p>'; }
+    } else {
+      if (b.dataset.v === it.q2) { b.classList.add('right'); $$('[data-q="2"] button', col).forEach(function(x){ x.disabled = true; }); fb.className = 'fb ok'; fb.innerHTML = '<p>Верно. ' + it.w + '</p><p>' + X(it.exp) + '</p>'; }
+      else { b.classList.add('wrong'); fb.className = 'fb bad'; fb.innerHTML = '<p>Пока не так. Распиши множители: ' + X(it.exp.split('=')[0]) + ' — посчитай, сколько всего букв a.</p>'; }
+    }
+    reveal(fb);
+  });
+}
+/* ===================== Генераторы заданий ===================== */
+var LET = ['a','b','c','x','y','m','n','p','k'];
+var PAIRS = [['a','b'],['x','y'],['m','n'],['p','q'],['c','d']];
+var TRIPLES = [['a','b','c'],['x','y','z'],['m','p','q'],['c','d','f']];
+var G = {};
+function addMsg(m,n){ return 'Ты сложила показатели (' + m + ' + ' + n + '). Здесь степень возводится в степень: множители повторяются ' + n + ' раз, поэтому показатели перемножаются.'; }
+function mulMsg(m,n){ return 'Ты перемножила показатели (' + m + ' · ' + n + '). Между степенями стоит знак умножения, основания одинаковые — показатели складываются.'; }
+
+G.mult1 = function(){
+  var v = pick(LET), m = ri(2,9), n = ri(2,9); if (m === 2 && n === 2) n = 3;
+  return T({gen:'mult1', sig:'mult1'+v+m+'_'+n, skill:'mult', prompt:X(v+'^'+m+' * '+v+'^'+n), ask:'Запиши произведение в виде одной степени.',
+    type:'mono', vars:[v], coef:false, ans:{c:1, e:o1(v,m+n)},
+    hints:['Какие основания здесь одинаковые? Какое действие стоит между степенями?', RULE.mult, 'Следующий шаг: ' + X(v+'^'+m+' * '+v+'^'+n+' = '+v+'^{'+m+'+'+n+'}') + '. Осталось сложить.'],
+    solution:'<p>' + X(v+'^'+m) + ' — это ' + m + ' множителей ' + v + ', а ' + X(v+'^'+n) + ' — ещё ' + n + '. Всего ' + m + ' + ' + n + ' = ' + (m+n) + '.</p><p>' + X(v+'^'+m+' * '+v+'^'+n+' = '+v+'^{'+m+'+'+n+'} = '+v+'^{'+(m+n)+'}') + '</p>',
+    diag:function(u){ return u.e[v] === m*n ? {msg:mulMsg(m,n), cat:'add_mult'} : null; }});
+};
+function o1(v,x){ var e = {}; e[v] = x; return e; }
+function o2(a,x,b,y){ var e = {}; e[a] = x; e[b] = y; return e; }
+
+G.mult2 = function(){
+  var v = pick(LET), m = ri(2,8), n = ri(1,7), k1 = ri(2,7), k2 = ri(2,6); if (m===2&&n===2) m = 3;
+  return T({gen:'mult2', sig:'mult2'+v+m+n+k1+k2, skill:'mult', prompt:X(k1+P(v,m)+' * '+k2+P(v,n)), ask:'Упрости выражение.',
+    type:'mono', vars:[v], ans:{c:k1*k2, e:o1(v,m+n)},
+    hints:['Что здесь можно перемножить отдельно: числа и степени с одинаковым основанием?', RULE.mult + ' Числа перемножаются как обычно.', 'Следующий шаг: ' + X('('+k1+' * '+k2+') * ('+P(v,m)+' * '+P(v,n)+')')],
+    solution:'<p>Переставим множители: числа к числам, буквы к буквам.</p><p>' + X('('+k1+' * '+k2+') * ('+P(v,m)+' * '+P(v,n)+') = '+(k1*k2)+v+'^{'+m+'+'+n+'} = '+(k1*k2)+P(v,m+n)) + '</p>',
+    diag:function(u){ if (u.c === k1+k2) return {msg:'Числа ' + k1 + ' и ' + k2 + ' нужно перемножить, а не сложить.', cat:'calc'}; if (u.e[v] === m*n && m*n !== m+n) return {msg:mulMsg(m,n), cat:'add_mult'}; return null; }});
+};
+G.mult3 = function(){
+  var pr = pick(PAIRS), a = pr[0], b = pr[1], m = ri(2,6), n = ri(1,5), p = ri(1,5), q = ri(2,6), k1 = ri(2,5), k2 = ri(2,5);
+  var e = o2(a,m+n,b,p+q);
+  return T({gen:'mult3', sig:'mult3'+a+m+n+p+q+k1+k2, skill:'mult', prompt:X(k1+P(a,m)+P(b,p)+' * '+k2+P(a,n)+P(b,q)), ask:'Упрости выражение.',
+    type:'mono', vars:[a,b], ans:{c:k1*k2, e:e},
+    hints:['Какие основания здесь одинаковые? Сгруппируй числа, буквы ' + a + ' и буквы ' + b + ' отдельно.', RULE.mult + ' Показатели разных букв не смешиваются.', 'Следующий шаг: ' + X('('+k1+' * '+k2+') * ('+P(a,m)+' * '+P(a,n)+') * ('+P(b,p)+' * '+P(b,q)+')')],
+    solution:'<p>' + X('('+k1+' * '+k2+') * ('+P(a,m)+' * '+P(a,n)+') * ('+P(b,p)+' * '+P(b,q)+')') + '</p><p>' + X('= '+(k1*k2)+a+'^{'+m+'+'+n+'}'+b+'^{'+p+'+'+q+'} = '+(k1*k2)+P(a,m+n)+P(b,p+q)) + '</p>',
+    diag:function(u){ var all = m+n+p+q; if (u.e[a] === all || u.e[b] === all) return {msg:'Показатели у ' + a + ' и у ' + b + ' нельзя складывать вместе: основания разные.', cat:'diff_bases'}; if (u.c === k1+k2) return {msg:'Числа нужно перемножить: ' + k1 + ' · ' + k2 + '.', cat:'calc'}; return null; }});
+};
+G.diff = function(){
+  var pr = pick(PAIRS), x = pr[0], y = pr[1], m = ri(2,6), n = ri(2,7); if (m === n) n++;
+  return CH({gen:'diff', sig:'diff'+x+m+n, skill:'mult', cat:'diff_bases', prompt:X(P(x,m)+' * '+P(y,n)), ask:'Как можно записать это выражение?', mix:true,
+    opts:[[X(x+'^{'+(m+n)+'}'),0,'Показатели складывают только у степеней с одинаковым основанием. ' + x + ' и ' + y + ' — разные основания.','diff_bases'],
+          [X('('+x+y+')^{'+(m+n)+'}'),0,X('('+x+y+')^{'+(m+n)+'}') + ' = ' + X(x+'^{'+(m+n)+'}'+y+'^{'+(m+n)+'}') + ' — это другое выражение.','diff_bases'],
+          [X('('+x+y+')^{'+(m*n)+'}'),0,'Показатели нельзя ни складывать, ни перемножать: основания разные.','diff_bases'],
+          ['Оставить ' + X(P(x,m)+P(y,n)) + ': проще записать нельзя',1,'Основания разные, поэтому ни одно правило умножения степеней не подходит.']],
+    hints:['Какие основания здесь одинаковые?', RULE.mult + ' Обрати внимание: правило работает только при одинаковом основании.', 'Следующий шаг: сравни основания ' + x + ' и ' + y + '. Если они разные, показатели остаются у своих букв.'],
+    solution:'<p>У степеней ' + X(P(x,m)) + ' и ' + X(P(y,n)) + ' разные основания. Распишем: ' + X(x+'·…·'+x+' * '+y+'·…·'+y) + ' — одинаковых множителей нет, считать вместе нечего.</p><p>Выражение ' + X(P(x,m)+P(y,n)) + ' уже записано проще некуда.</p>'});
+};
+G.cmp = function(){
+  var v = pick(LET), m = ri(2,6), n = ri(2,5); if (m===2&&n===2) n=3;
+  var isPow = Math.random() < .5;
+  var e = isPow ? '('+v+'^'+m+')^'+n : v+'^'+m+' * '+v+'^'+n;
+  return CH({gen:'cmp', sig:'cmp'+isPow+v+m+n, skill: isPow ? 'pp' : 'mult', cat:'add_mult', prompt:X(e), ask:'Сначала определи действие. Что нужно сделать с показателями?',
+    opts:[['Сложить: ' + m + ' + ' + n, !isPow, isPow ? 'Здесь степень ' + X(P(v,m)) + ' стоит в скобках и возводится в степень ' + n + ': она повторяется ' + n + ' раза. Показатели перемножаются.' : 'Две степени с одинаковым основанием умножаются — показатели складываются: ' + X(v+'^{'+(m+n)+'}') + '.', 'add_mult'],
+          ['Перемножить: ' + m + ' · ' + n, isPow, isPow ? 'Степень в степени: ' + X(v+'^{'+(m*n)+'}') + '.' : 'Здесь нет скобок со степенью: две степени стоят рядом и умножаются. Показатели складываются.', 'add_mult'],
+          ['Вычесть: ' + m + ' − ' + n, false, 'Вычитают показатели при делении степеней, а здесь деления нет.', 'add_mult']],
+    hints:['Есть ли здесь скобки, на которые действует внешний показатель? Или две степени просто стоят рядом?', isPow ? RULE.pp : RULE.mult, 'Следующий шаг: распиши множители — ' + (isPow ? X('('+v+'^'+m+')·…·('+v+'^'+m+')') + ', всего ' + n + ' скобок.' : X(P(v,m)+' * '+P(v,n)) + ' — это ' + m + ' и ещё ' + n + ' множителей.')],
+    solution: isPow ? '<p>' + X(e) + ' — степень ' + X(P(v,m)) + ' повторяется ' + n + ' раз. Всего ' + m + ' · ' + n + ' = ' + (m*n) + ' множителей: ' + X(v+'^{'+(m*n)+'}') + '.</p>' : '<p>' + X(e) + ' — ' + m + ' множителей и ещё ' + n + '. Всего ' + m + ' + ' + n + ' = ' + (m+n) + ': ' + X(v+'^{'+(m+n)+'}') + '.</p>'});
+};
+G.div1 = function(){
+  var v = pick(LET), m = ri(5,12), n = ri(2,m-1);
+  return T({gen:'div1', sig:'div1'+v+m+n, skill:'div', prompt:M(F(P(v,m),P(v,n))), ask:'Запиши частное в виде одной степени (' + v + ' ≠ 0).',
+    type:'mono', vars:[v], coef:false, ans:{c:1, e:o1(v,m-n)},
+    hints:['Сколько одинаковых множителей ' + v + ' сверху и сколько снизу? Где их больше?', RULE.div, 'Следующий шаг: ' + X(v+'^{'+m+'−'+n+'}') + '. Осталось вычесть.'],
+    solution:'<p>Сократим ' + n + ' ' + word(n,'пару','пары','пар') + ' одинаковых множителей:</p>' + W('cancel',{b:v,m:m,n:n}) + '<p>' + M(F(P(v,m),P(v,n)) + ' = ' + v + '<sup>' + m + '−' + n + '</sup> = ' + P(v,m-n)) + '</p>',
+    diag:function(u){ if (m%n===0 && u.e[v] === m/n) return {msg:'Показатели не делятся, а вычитаются: при сокращении убирается ' + n + ' пар множителей.', cat:'div_sub'}; if (u.e[v] === m+n) return {msg:'При делении показатели вычитаются, а не складываются.', cat:'div_sub'}; return null; }});
+};
+G.div2 = function(){
+  var pr = pick(PAIRS), a = pr[0], b = pr[1], k2 = ri(2,5), c = ri(2,6), k1 = c*k2, m = ri(4,9), n = ri(1,m-1), p = ri(3,8), q = ri(1,p-1);
+  var den = k2 + P(a,n) + P(b,q);
+  return T({gen:'div2', sig:'div2'+a+m+n+p+q+k1+k2, skill:'div', prompt:M(F(k1+P(a,m)+P(b,p), den)), ask:'Сократи дробь (' + a + ' ≠ 0, ' + b + ' ≠ 0).',
+    type:'mono', vars:[a,b], ans:{c:c, e:o2(a,m-n,b,p-q)},
+    hints:['Что можно сократить отдельно: числа, буквы ' + a + ', буквы ' + b + '?', RULE.div, 'Следующий шаг: ' + M(F(k1,k2) + ' · ' + F(P(a,m),P(a,n)) + ' · ' + F(P(b,p),P(b,q)))],
+    solution:'<p>' + M(F(k1+P(a,m)+P(b,p), den) + ' = ' + F(k1,k2) + ' · ' + F(P(a,m),P(a,n)) + ' · ' + F(P(b,p),P(b,q))) + '</p><p>' + X('= '+c+' * '+a+'^{'+m+'−'+n+'} * '+b+'^{'+p+'−'+q+'} = '+c+P(a,m-n)+P(b,p-q)) + '</p>',
+    diag:function(u){ if (u.c === k1-k2) return {msg:'Числа делятся: ' + k1 + ' : ' + k2 + ' = ' + c + '.', cat:'calc'}; if (u.e[a] === m+n || u.e[b] === p+q) return {msg:'При делении показатели вычитаются.', cat:'div_sub'}; return null; }});
+};
+G.divLess = function(){
+  var v = pick(LET), m = ri(2,6), n = m + ri(2,5);
+  return T({gen:'divLess', sig:'divLess'+v+m+n, skill:'div', cat:'remainder', prompt:M(F(P(v,m),P(v,n))), ask:'Сократи дробь (' + v + ' ≠ 0). Ответ запиши дробью, степень оставь в знаменателе.',
+    type:'frac', vars:[v], ans:{n:{c:1,e:{}}, d:{c:1,e:o1(v,n-m)}},
+    hints:['Где множителей ' + v + ' больше: в числителе или в знаменателе?', RULE.div, 'Следующий шаг: после сокращения ' + m + ' пар в числителе остаётся 1, а в знаменателе ' + n + ' − ' + m + ' множителей.'],
+    solution:W('cancel',{b:v,m:m,n:n}) + '<p>' + M(F(P(v,m),P(v,n)) + ' = ' + F('1', v + '<sup>' + n + '−' + m + '</sup>') + ' = ' + F('1',P(v,n-m))) + '</p><p>В числителе 1, а не 0: каждая сокращённая пара ' + M(F(v,v)) + ' равна 1.</p>',
+    diag:function(u){ if ((u.n.e[v]||0) === n-m && !(u.d.e[v]||0)) return {msg:'Число оставшихся множителей найдено верно (' + (n-m) + '), но ты записала их в числитель. Они остаются в знаменателе — там множителей ' + v + ' было больше.', cat:'remainder'}; if (u.n.c === 0) return {msg:'В числителе не 0: каждая пара ' + M(F(v,v)) + ' = 1, поэтому сверху остаётся 1.', cat:'remainder'}; return null; }});
+};
+G.recip = function(){
+  var pr = pick(PAIRS), x = pr[0], y = pr[1], m = ri(2,6), n = ri(2,7); if (m===n) n++;
+  return T({gen:'recip', sig:'recip'+x+m+n, skill:'frac', cat:'diff_bases', prompt:M(F('1',P(x,m)) + ' · ' + F('1',P(y,n))), ask:'Запиши произведение одной дробью.',
+    type:'frac', vars:[x,y], ans:{n:{c:1,e:{}}, d:{c:1,e:o2(x,m,y,n)}},
+    hints:['Как умножают дроби? Что происходит с числителями и со знаменателями?', 'Числители перемножаются, знаменатели перемножаются: ' + M(F('1','A') + ' · ' + F('1','B') + ' = ' + F('1','A·B')) + '. Показатели складывают только у одинаковых оснований.', 'Следующий шаг: ' + M(F('1', P(x,m) + ' · ' + P(y,n))) + '. Можно ли тут что-то сложить?'],
+    solution:'<p>' + M(F('1',P(x,m)) + ' · ' + F('1',P(y,n)) + ' = ' + F('1·1', P(x,m)+' · '+P(y,n)) + ' = ' + F('1', P(x,m)+P(y,n))) + '</p><p>Основания ' + x + ' и ' + y + ' разные, поэтому показатели остаются отдельно. Неверно: ' + M(F('1', '('+x+y+')<sup>'+(m+n)+'</sup>')) + ' или ' + M(F('1', x+y+'<sup>'+(m+n)+'</sup>')) + '.</p>',
+    diag:function(u){ var s = m+n; if (u.d.e[x] === s || u.d.e[y] === s) return {msg:'Показатели ' + m + ' и ' + n + ' нельзя складывать: основания ' + x + ' и ' + y + ' разные.', cat:'diff_bases'}; return null; }});
+};
+G.pp1 = function(){
+  var v = pick(LET), m = ri(2,7), n = ri(2,5); if (m===2&&n===2) m = 3;
+  return T({gen:'pp1', sig:'pp1'+v+m+n, skill:'pp', prompt:X('('+v+'^'+m+')^'+n), ask:'Запиши в виде одной степени.',
+    type:'mono', vars:[v], coef:false, ans:{c:1, e:o1(v,m*n)},
+    hints:['Здесь две степени умножаются или степень возводится в степень?', RULE.pp, 'Следующий шаг: ' + X(v+'^{'+m+'·'+n+'}') + '.'],
+    solution:'<p>' + X('('+v+'^'+m+')^'+n) + ' — это ' + n + ' одинаковых скобок ' + X('('+v+'^'+m+')') + ', в каждой по ' + m + ' множителей.</p><p>' + X('('+v+'^'+m+')^'+n+' = '+v+'^{'+m+'·'+n+'} = '+v+'^{'+(m*n)+'}') + '</p>',
+    diag:function(u){ return u.e[v] === m+n ? {msg:addMsg(m,n), cat:'add_mult'} : null; }});
+};
+G.pp2 = function(){
+  var v = pick(LET), m = ri(2,5), n = ri(2,4), k = ri(1,6); if (m===2&&n===2) m = 3;
+  return T({gen:'pp2', sig:'pp2'+v+m+n+k, skill:'mixed', prompt:X('('+v+'^'+m+')^'+n+' * '+P(v,k)), ask:'Запиши в виде одной степени.',
+    type:'mono', vars:[v], coef:false, ans:{c:1, e:o1(v,m*n+k)},
+    hints:['Какое действие нужно сделать первым: раскрыть скобку со степенью или умножать?', RULE.pp + ' Потом: ' + RULE.mult, 'Следующий шаг: ' + X('('+v+'^'+m+')^'+n+' = '+v+'^{'+(m*n)+'}') + '. Теперь умножь на ' + X(P(v,k)) + '.'],
+    solution:'<p>' + X('('+v+'^'+m+')^'+n+' * '+P(v,k)+' = '+v+'^{'+m+'·'+n+'} * '+P(v,k)+' = '+v+'^{'+(m*n)+'} * '+P(v,k)+' = '+v+'^{'+(m*n)+'+'+k+'} = '+v+'^{'+(m*n+k)+'}') + '</p>',
+    diag:function(u){ if (u.e[v] === m+n+k) return {msg:'В скобке степень возводится в степень — там показатели перемножаются: ' + m + ' · ' + n + '.', cat:'add_mult'}; if (u.e[v] === m*n*k) return {msg:'После раскрытия скобки умножаются степени ' + X(v+'^{'+(m*n)+'}') + ' и ' + X(P(v,k)) + ' — показатели складываются.', cat:'add_mult'}; return null; }});
+};
+G.zero = function(){
+  var t = ri(0,2), v = pick(LET), k = ri(2,15);
+  if (t === 0) return IN({gen:'zero', sig:'zero0'+k, skill:'zero', prompt:X(k+'^0'), ask:'Чему равно значение?', ans:1,
+    d:{0:['Нулевая степень не даёт 0. Например, ' + M(F(S(k+'^3'),S(k+'^3'))) + ' = 1, а по правилу деления это ' + X(k+'^0') + '.'], [k]:['Нулевая степень не оставляет число без изменений: ' + X(k+'^0') + ' = 1.']},
+    hints:['Что получится, если ' + X(k+'^3') + ' разделить на ' + X(k+'^3') + '?', RULE.zero, 'Следующий шаг: ' + M(F(S(k+'^3'),S(k+'^3')) + ' = ' + k + '<sup>3−3</sup> = ' + k + '<sup>0</sup>') + '. А чему равна дробь с одинаковыми числителем и знаменателем?'],
+    solution:'<p>' + M(F(S(k+'^3'),S(k+'^3'))) + ' = 1 и одновременно ' + X(k+'^{3−3} = '+k+'^0') + '. Поэтому ' + X(k+'^0 = 1') + ' (это верно для любого основания, кроме 0; выражение 0⁰ не определяют).</p>'});
+  if (t === 1) { var m = ri(2,9); return IN({gen:'zero', sig:'zero1'+v+m, skill:'zero', prompt:M(F(P(v,m),P(v,m))), ask:'Чему равно значение при ' + v + ' ≠ 0?', ans:1,
+    d:{0:['При сокращении пары ' + M(F(v,v)) + ' дают 1, а не 0.']},
+    hints:['Сколько множителей сверху и сколько снизу?', RULE.zero, 'Следующий шаг: сократи все ' + m + ' пар.'],
+    solution:W('cancel',{b:v,m:m,n:m}) + '<p>Все пары сократились, осталось 1. По правилу деления: ' + X(v+'^{'+m+'−'+m+'} = '+v+'^0 = 1') + '.</p>'}); }
+  var c = ri(2,9);
+  return IN({gen:'zero', sig:'zero2'+v+c, skill:'zero', prompt:X(c+v+'^0'), ask:'Чему равно значение при ' + v + ' ≠ 0?', ans:c,
+    d:{1:['В нулевую степень возводится только ' + v + ': ' + X(v+'^0 = 1') + '. Число ' + c + ' остаётся множителем.'], 0:['' + X(v+'^0') + ' = 1, а не 0.']},
+    hints:['На что действует показатель 0: на всё выражение или только на ' + v + '?', RULE.zero, 'Следующий шаг: ' + X(c+v+'^0 = '+c+' * 1') + '.'],
+    solution:'<p>' + X(c+v+'^0 = '+c+' * 1 = '+c) + '.</p>'});
+};
+G.prod1 = function(){
+  var pr = pick(PAIRS), a = pr[0], b = pr[1], m = ri(1,5), n = ri(2,5), p = ri(1,4);
+  return T({gen:'prod1', sig:'prod1'+a+m+n+p, skill:'prod', prompt:X('('+P(a,m)+P(b,p)+')^'+n), ask:'Возведи в степень.',
+    type:'mono', vars:[a,b], coef:false, ans:{c:1, e:o2(a,m*n,b,p*n)},
+    hints:['На какие множители действует внешний показатель ' + n + '?', RULE.prod, 'Следующий шаг: ' + X('('+P(a,m)+')^'+n+' * ('+P(b,p)+')^'+n) + '.'],
+    solution:'<p>' + X('('+P(a,m)+P(b,p)+')^'+n+' = ('+P(a,m)+')^'+n+' * ('+P(b,p)+')^'+n+' = '+P(a,m*n)+P(b,p*n)) + '</p>' + (m===1||p===1 ? '<p>Буква без показателя — это показатель 1.</p>' : ''),
+    diag:function(u){ if (u.e[a] === m+n || u.e[b] === p+n) return {msg:addMsg(m===1?p:m,n), cat:'add_mult'}; return null; }});
+};
+G.prod2 = function(){
+  var pr = pick(PAIRS), a = pr[0], b = pr[1], k = ri(2,5), n = k === 2 ? ri(2,5) : ri(2,3), m = ri(1,5), p = ri(1,5);
+  var kn = ipow(k,n);
+  return T({gen:'prod2', sig:'prod2'+a+k+n+m+p, skill:'prod', cat:'skill:prod', prompt:X('('+k+P(a,m)+P(b,p)+')^'+n), ask:'Возведи в степень.',
+    type:'mono', vars:[a,b], ans:{c:kn, e:o2(a,m*n,b,p*n)},
+    hints:['Какие множители стоят внутри скобки? Не забудь про число.', RULE.prod, 'Следующий шаг: ' + X(k+'^'+n+' * ('+P(a,m)+')^'+n+' * ('+P(b,p)+')^'+n) + '.'],
+    solution:'<p>Внешняя степень действует на каждый множитель: на ' + k + ', на ' + X(P(a,m)) + ' и на ' + X(P(b,p)) + '.</p><p>' + X('('+k+P(a,m)+P(b,p)+')^'+n+' = '+k+'^'+n+' * '+a+'^{'+m+'·'+n+'} * '+b+'^{'+p+'·'+n+'} = '+kn+P(a,m*n)+P(b,p*n)) + '</p>',
+    diag:function(u){ if (u.c === k) return {msg:'Число ' + k + ' стоит внутри скобки, поэтому его тоже нужно возвести в степень ' + n + ': ' + X(k+'^'+n) + ' = ' + kn + '.', cat:'coef_forgot'}; if (u.c === k*n && k*n !== kn) return {msg:X(k+'^'+n) + ' — это ' + n + ' множителей ' + k + ', а не ' + k + ' · ' + n + '.', cat:'calc'}; if (u.e[a] === m+n || u.e[b] === p+n) return {msg:'У каждой буквы показатели перемножаются: степень в степени.', cat:'add_mult'}; return null; }});
+};
+G.prodBig = function(){
+  var tr = pick(TRIPLES), a = tr[0], b = tr[1], c = tr[2], m = ri(2,5), p = ri(2,7), n = ri(10,20);
+  return T({gen:'prodBig', sig:'prodBig'+a+m+p+n, skill:'prod', prompt:X('('+P(a,m)+b+P(c,p)+')^{'+n+'}'), ask:'Возведи в степень.',
+    type:'mono', vars:[a,b,c], coef:false, ans:{c:1, e:(function(){ var e={}; e[a]=m*n; e[b]=n; e[c]=p*n; return e; })()},
+    hints:['Сколько множителей внутри скобки? Какой показатель у ' + b + '?', RULE.prod + ' Буква без показателя — это показатель 1.', 'Следующий шаг: ' + X('('+P(a,m)+')^{'+n+'} * '+b+'^{'+n+'} * ('+P(c,p)+')^{'+n+'}') + '.'],
+    solution:'<p>' + X('('+P(a,m)+b+P(c,p)+')^{'+n+'} = '+a+'^{'+m+'·'+n+'} * '+b+'^{1·'+n+'} * '+c+'^{'+p+'·'+n+'} = '+a+'^{'+(m*n)+'}'+b+'^{'+n+'}'+c+'^{'+(p*n)+'}') + '</p>',
+    diag:function(u){ if (u.e[b] === 1 || u.e[b] === 0) return {msg:'У ' + b + ' показатель 1, поэтому после возведения в степень ' + n + ' получится ' + X(b+'^{'+n+'}') + '.', cat:'skill:prod'}; if (u.e[a] === m+n || u.e[c] === p+n) return {msg:addMsg(m,n), cat:'add_mult'}; return null; }});
+};
+G.fracpow = function(){
+  var pr = pick(PAIRS), a = pr[0], b = pr[1], k = pick([1,2,3]), n = ri(2,3), m = ri(1,4), p = ri(1,4);
+  var top = (k>1?k:'') + P(a,m);
+  return T({gen:'fracpow', sig:'fracpow'+a+k+n+m+p, skill:'frac', prompt:M('(' + F(top, P(b,p)) + ')<sup>' + n + '</sup>'), ask:'Возведи дробь в степень (' + b + ' ≠ 0).',
+    type:'frac', vars:[a,b], ans:{n:{c:ipow(k,n), e:o1(a,m*n)}, d:{c:1, e:o1(b,p*n)}},
+    hints:['Что стоит в числителе и что в знаменателе? На что действует показатель ' + n + '?', RULE.frac, 'Следующий шаг: ' + M(F('(' + top + ')<sup>' + n + '</sup>', '(' + P(b,p) + ')<sup>' + n + '</sup>')) + '.'],
+    solution:'<p>' + M('(' + F(top, P(b,p)) + ')<sup>' + n + '</sup> = ' + F('(' + top + ')<sup>' + n + '</sup>', '(' + P(b,p) + ')<sup>' + n + '</sup>') + ' = ' + F(mono(ipow(k,n),o1(a,m*n)), P(b,p*n))) + '</p>',
+    diag:function(u){ if (k>1 && u.n.c === k) return {msg:'Число ' + k + ' в числителе тоже возводится в степень: ' + X(k+'^'+n) + ' = ' + ipow(k,n) + '.', cat:'coef_forgot'}; if ((u.d.e[b]||0) === p && p*n !== p) return {msg:'Степень действует и на знаменатель: ' + X('('+P(b,p)+')^'+n) + '.', cat:'skill:frac'}; if ((u.n.e[a]||0) === m+n) return {msg:addMsg(m,n), cat:'add_mult'}; return null; }});
+};
+G.inv1 = function(){
+  var v = pick(LET), m = ri(2,6), n = ri(2,5); if (m===2&&n===2) n=3;
+  return IN({gen:'inv1', sig:'inv1'+v+m+n, skill:'inv', prompt:X(v+'^{'+(m*n)+'} = ('+v+'^'+m+')^{?}'), ask:'Какой показатель нужно поставить вместо знака вопроса?', ans:n,
+    d:(function(){ var d = {}; d[m*n-m] = ['Ты вычла показатели. Но в ' + X('('+v+'^'+m+')^n') + ' показатели перемножаются: нужно, чтобы ' + m + ' · ? = ' + (m*n) + '.','add_mult']; return d; })(),
+    hints:['Что происходит с показателями, когда степень возводят в степень?', RULE.pp + ' Обратно: ' + X('a^{mn} = (a^m)^n') + '.', 'Следующий шаг: реши ' + m + ' · ? = ' + (m*n) + '.'],
+    solution:'<p>' + X('('+v+'^'+m+')^n = '+v+'^{'+m+'n}') + '. Нужно ' + m + ' · n = ' + (m*n) + ', значит n = ' + n + '.</p><p>' + X(v+'^{'+(m*n)+'} = ('+v+'^'+m+')^'+n) + '</p>'});
+};
+G.inv2 = function(){
+  var N = pick([2,2,3]), k = N === 2 ? ri(2,9) : ri(2,5), vs = Math.random()<.5 ? pick(PAIRS) : pick(TRIPLES);
+  var inner = {}, tg = {}; vs.forEach(function(v){ inner[v] = ri(1,5); tg[v] = inner[v]*N; });
+  var kc = ipow(k,N), first = vs[0];
+  return T({gen:'inv2', sig:'inv2'+N+k+vs.join('')+vs.map(function(v){return inner[v];}).join(''), skill:'inv', cat:'skill:inv',
+    prompt:M(mono(kc,tg,vs)), ask:'Запиши в виде ' + (N===2?'квадрата':'куба') + ' одночлена: одна скобка в степени ' + N + '.',
+    type:'powprod', N:N, vars:vs, target:{c:kc, e:tg}, ans:{k:k, e:inner},
+    hints:['Какое число в ' + (N===2?'квадрате':'кубе') + ' даёт ' + kc + '? Какой показатель должен быть у каждой буквы внутри скобки?', RULE.inv, 'Следующий шаг: ' + X(kc+' = '+k+'^'+N) + ' и ' + X(first+'^{'+tg[first]+'} = ('+P(first,inner[first])+')^'+N) + '.'],
+    solution:'<p>' + X(kc+' = '+k+'^'+N) + ', ' + vs.map(function(v){ return X(v+'^{'+tg[v]+'} = ('+P(v,inner[v])+')^'+N); }).join(', ') + '.</p><p>' + M(mono(kc,tg,vs) + ' = ' + num(k) + '<sup>' + N + '</sup>' + vs.map(function(v){ return '(' + P(v,inner[v]) + ')<sup>' + N + '</sup>'; }).join('') + ' = (' + mono(k,inner,vs) + ')<sup>' + N + '</sup>') + '</p>'});
+};
+function pfactor(n){ var r = {}, p = 2; while (n > 1) { while (n % p === 0) { r[p] = (r[p]||0) + 1; n /= p; } p++; } return r; }
+function numSolution(lines, exps, primes){ // exps: {p: [num, den]}
+  var s = '<p>' + lines.join('</p><p>') + '</p>';
+  var top = [], bot = [], nv = 1, dv = 1;
+  primes.forEach(function(p){ var x = exps[p][0], y = exps[p][1];
+    if (x > y) { top.push(P(p,x-y)); nv *= ipow(p,x-y); s += '<p>' + M(F(P(p,x),P(p,y)) + ' = ' + p + '<sup>' + x + '−' + y + '</sup> = ' + P(p,x-y)) + ' — остаётся в числителе.</p>'; }
+    else if (x < y) { bot.push(P(p,y-x)); dv *= ipow(p,y-x); s += '<p>' + M(F(P(p,x),P(p,y)) + ' = ' + F('1',P(p,y-x))) + ' — множителей ' + p + ' больше в знаменателе, остаток там.</p>'; }
+    else s += '<p>' + M(F(P(p,x),P(p,y))) + ' = 1 — сокращается полностью.</p>'; });
+  s += '<p>Итог: ' + M((bot.length ? F(top.length ? top.join(' · ') : '1', bot.join(' · ')) : top.join(' · ') || '1') + ' = ' + (dv === 1 ? nv : F(nv,dv))) + '</p>';
+  return {html:s, n:nv, d:dv};
+}
+G.numdec = function(){
+  var res, a, b, c, p, q, pq;
+  for (var tries = 0; tries < 200; tries++) {
+    var pr = pick([[2,3],[2,5],[3,5],[2,7],[3,7],[5,7]]); p = pr[0]; q = pr[1]; pq = p*q;
+    c = ri(2,5); a = Math.max(1, c + ri(-2,2)); b = Math.max(1, c + ri(-2,2));
+    if (a === c && b === c) continue;
+    res = numSolution([], (function(){ var e={}; e[p]=[a,c]; e[q]=[b,c]; return e; })(), [p,q]);
+    if (res.n <= 300 && res.d <= 300) break;
+  }
+  var e = {}; e[p] = [a,c]; e[q] = [b,c];
+  var sol = numSolution(['Разложим основание знаменателя: ' + pq + ' = ' + p + ' · ' + q + ', поэтому ' + X(pq+'^'+c+' = ('+p+' * '+q+')^'+c+' = '+p+'^'+c+' * '+q+'^'+c) + '.',
+    M(F(P(p,a)+' · '+P(q,b), P(pq,c)) + ' = ' + F(P(p,a)+' · '+P(q,b), P(p,c)+' · '+P(q,c)))], e, [p,q]);
+  return T({gen:'numdec', sig:'numdec'+p+q+a+b+c, skill:'num', prompt:M(F(P(p,a)+' · '+P(q,b), P(pq,c))), ask:'Найди значение без вычисления больших чисел. Ответ — несократимая дробь или целое число.',
+    type:'nfrac', ans:{n:sol.n, d:sol.d},
+    hints:['На какие множители раскладывается ' + pq + '? Какие основания тогда станут одинаковыми?', RULE.num + ' ' + RULE.prod, 'Следующий шаг: ' + X(pq+'^'+c+' = '+p+'^'+c+' * '+q+'^'+c) + '. Теперь сокращай степени с основанием ' + p + ' и с основанием ' + q + '.'],
+    solution:sol.html});
+};
+G.numdec2 = function(){
+  var best = null;
+  for (var tries = 0; tries < 400 && !best; tries++) {
+    var pr = pick([[3,5],[2,5],[5,7],[2,3],[2,7],[3,7]]), p = pr[0], q = pr[1];
+    var i = ri(1,3), j = ri(1,3); if (i === 1 && j === 1) continue;
+    var r1 = ipow(p,i), r2 = ipow(q,j); if (r1 > 125 || r2 > 125) continue;
+    var kind = Math.random() < .5 ? 'sep' : 'joint';
+    var x = ri(2,5), y = kind === 'sep' ? ri(2,5) : x;
+    var A = i*x, B = j*y, z = Math.min(A,B) - ri(0,1); if (z < 2) continue;
+    var nv = ipow(p,A-z) * ipow(q,B-z); if (nv > 400 || nv === 1) continue;
+    best = {p:p,q:q,i:i,j:j,r1:r1,r2:r2,kind:kind,x:x,y:y,A:A,B:B,z:z};
+  }
+  var o = best, s = o.p*o.q, e = {}; e[o.p] = [o.A,o.z]; e[o.q] = [o.B,o.z];
+  var top = o.kind === 'sep' ? P(o.r1,o.x) + ' · ' + P(o.r2,o.y) : '(' + o.r1 + ' · ' + o.r2 + ')<sup>' + o.x + '</sup>';
+  var lines = ['Разложим числа: ' + [o.r1 + (o.i>1 ? ' = ' + P(o.p,o.i) : ''), o.r2 + (o.j>1 ? ' = ' + P(o.q,o.j) : ''), s + ' = ' + o.p + ' · ' + o.q].map(M).join(', ') + '.'];
+  if (o.kind === 'sep') lines.push(M(P(o.r1,o.x) + ' = (' + P(o.p,o.i) + ')<sup>' + o.x + '</sup> = ' + P(o.p,o.A)) + ', ' + M(P(o.r2,o.y) + ' = (' + P(o.q,o.j) + ')<sup>' + o.y + '</sup> = ' + P(o.q,o.B)) + '.');
+  else lines.push(M('(' + o.r1 + ' · ' + o.r2 + ')<sup>' + o.x + '</sup> = (' + P(o.p,o.i) + ' · ' + P(o.q,o.j) + ')<sup>' + o.x + '</sup> = ' + P(o.p,o.A) + ' · ' + P(o.q,o.B)) + '.');
+  lines.push(M(P(s,o.z) + ' = ' + P(o.p,o.z) + ' · ' + P(o.q,o.z)) + '.');
+  var sol = numSolution(lines, e, [o.p,o.q]);
+  return T({gen:'numdec2', sig:'numdec2'+JSON.stringify(o), skill:'num', prompt:M(F(top, P(s,o.z))), ask:'Найди значение, не вычисляя больших степеней.',
+    type:'nfrac', ans:{n:sol.n, d:sol.d},
+    hints:['Какие из чисел ' + o.r1 + ', ' + o.r2 + ', ' + s + ' можно записать как степень или произведение простых чисел?', RULE.num + ' ' + RULE.pp, 'Следующий шаг: ' + lines[0].replace('Разложим числа: ','')],
+    solution:sol.html});
+};
+G.minus = function(){
+  var k = ri(2,3), n = k === 2 ? ri(2,5) : ri(2,4), inside = Math.random() < .5;
+  var val = inside ? ipow(-k,n) : -ipow(k,n);
+  var d = {}; d[-val] = [inside ? 'Здесь минус стоит внутри скобок и входит в основание: ' + X('(−'+k+')^'+n) + ' = ' + Array(n+1).join('(−'+k+')·').slice(0,-1) + '. ' + (n%2===0 ? 'Чётное число минусов даёт плюс.' : 'Нечётное число минусов даёт минус.') : 'Здесь скобок нет, поэтому в степень возводится только ' + k + ', а минус стоит перед результатом: ' + X('−'+k+'^'+n+' = −('+k+'^'+n+')') + '.', 'minus'];
+  if (k*n !== ipow(k,n)) { d[k*n] = [X(k+'^'+n) + ' — это ' + n + ' множителей ' + k + ', а не ' + k + ' · ' + n + '.', 'calc']; d[-k*n] = d[k*n]; }
+  return IN({gen:'minus', sig:'minus'+k+n+inside, skill:'traps', cat:'minus', sign:true, prompt:X(inside ? '(−'+k+')^'+n : '−'+k+'^'+n), ask:'Вычисли. Входит ли минус в основание степени?', ans:val, d:d,
+    hints:['Есть ли скобки вокруг минуса? Что именно возводится в степень?', RULE.traps, inside ? 'Следующий шаг: ' + M(Array(n+1).join('(−'+k+')·').slice(0,-1)) + '. Посчитай, сколько здесь минусов.' : 'Следующий шаг: ' + X('−'+k+'^'+n+' = −('+Array(n+1).join(k+'·').slice(0,-1)+')') + '.'],
+    solution: inside ? '<p>Минус в скобках — часть основания: ' + M('(−' + k + ')<sup>' + n + '</sup> = ' + Array(n+1).join('(−'+k+')·').slice(0,-1) + ' = ' + num(val)) + '.</p>' : '<p>Скобок нет: степень относится только к ' + k + '. ' + M('−' + k + '<sup>' + n + '</sup> = −(' + Array(n+1).join(k+'·').slice(0,-1) + ') = ' + num(val)) + '.</p><p>Сравни: ' + X('(−'+k+')^'+n) + ' = ' + num(ipow(-k,n)) + '.</p>'});
+};
+G.sum = function(){
+  var p = ri(1,5), q = ri(1,5), v = (p+q)*(p+q);
+  var d = {}; d[p*p+q*q] = ['Сумму нельзя возводить в степень по частям: ' + X('('+p+' + '+q+')^2') + ' ≠ ' + X(p+'^2 + '+q+'^2') + '. Правило ' + X('(ab)^n = a^nb^n') + ' работает только для произведения. Сначала посчитай сумму в скобках.', 'sum_pow'];
+  d[2*(p+q)] = [X('('+(p+q)+')^2') + ' — это ' + (p+q) + ' · ' + (p+q) + ', а не ' + (p+q) + ' · 2.', 'calc'];
+  return IN({gen:'sum', sig:'sum'+p+q, skill:'traps', cat:'sum_pow', prompt:X('('+p+' + '+q+')^2'), ask:'Вычисли значение.', ans:v, d:d,
+    hints:['Что стоит в скобках: произведение или сумма?', RULE.traps, 'Следующий шаг: ' + X('('+p+' + '+q+')^2 = '+(p+q)+'^2') + '.'],
+    solution:'<p>' + X('('+p+' + '+q+')^2 = '+(p+q)+'^2 = '+v) + '.</p><p>Для сравнения: ' + X(p+'^2 + '+q+'^2') + ' = ' + (p*p+q*q) + ' — это другое число. Поэтому ' + X('(a + b)^2') + ' нельзя заменять на ' + X('a^2 + b^2') + '.</p>'});
+};
+G.mixed = function(){
+  var t = ri(0,2), pr = pick(PAIRS), a = pr[0], b = pr[1];
+  if (t === 0) { var m = ri(2,4), n = ri(2,3), k = ri(1,5), p = ri(1,4);
+    return T({gen:'mixed', sig:'mixed0'+a+m+n+k+p, skill:'mixed', prompt:X('('+P(a,m)+b+')^'+n+' * '+P(a,k)+P(b,p)), ask:'Упрости выражение.',
+      type:'mono', vars:[a,b], coef:false, ans:{c:1, e:o2(a,m*n+k,b,n+p)},
+      hints:['Какое действие нужно сделать первым?', RULE.prod + ' Потом: ' + RULE.mult, 'Следующий шаг: ' + X('('+P(a,m)+b+')^'+n+' = '+a+'^{'+(m*n)+'}'+b+'^'+n) + '.'],
+      solution:'<p>' + X('('+P(a,m)+b+')^'+n+' = '+a+'^{'+(m*n)+'}'+b+'^'+n) + '.</p><p>' + X(a+'^{'+(m*n)+'}'+b+'^'+n+' * '+P(a,k)+P(b,p)+' = '+a+'^{'+(m*n)+'+'+k+'}'+b+'^{'+n+'+'+p+'} = '+P(a,m*n+k)+P(b,n+p)) + '</p>',
+      diag:function(u){ if (u.e[a] === m+n+k) return {msg:'В скобке степень в степени: показатели ' + m + ' и ' + n + ' перемножаются.', cat:'add_mult'}; if (u.e[b] === 1+p) return {msg:'Внешняя степень ' + n + ' действует и на ' + b + ' в скобке.', cat:'skill:prod'}; return null; }}); }
+  if (t === 1) { var m1 = ri(2,5), n1 = ri(2,4), k1 = ri(1, m1*n1-1);
+    return T({gen:'mixed', sig:'mixed1'+a+m1+n1+k1, skill:'mixed', prompt:M(F('(' + P(a,m1) + ')<sup>' + n1 + '</sup>', P(a,k1))), ask:'Упрости (' + a + ' ≠ 0).',
+      type:'mono', vars:[a], coef:false, ans:{c:1, e:o1(a,m1*n1-k1)},
+      hints:['Что сделать сначала: раскрыть скобку или делить?', RULE.pp + ' Потом: ' + RULE.div, 'Следующий шаг: ' + X('('+a+'^'+m1+')^'+n1+' = '+a+'^{'+(m1*n1)+'}') + '.'],
+      solution:'<p>' + M(F('(' + P(a,m1) + ')<sup>' + n1 + '</sup>', P(a,k1)) + ' = ' + F(P(a,m1*n1), P(a,k1)) + ' = ' + a + '<sup>' + (m1*n1) + '−' + k1 + '</sup> = ' + P(a,m1*n1-k1)) + '</p>',
+      diag:function(u){ if (u.e[a] === m1+n1-k1) return {msg:'В скобке показатели нужно перемножить: ' + m1 + ' · ' + n1 + '.', cat:'add_mult'}; return null; }}); }
+  var k = ri(2,3), n2 = 3, m2 = ri(1,3), p2 = ri(1, m2*n2-1), kd = ipow(k,n2-1);
+  return T({gen:'mixed', sig:'mixed2'+a+k+m2+p2, skill:'mixed', prompt:M(F('(' + k + P(a,m2) + ')<sup>' + n2 + '</sup>', kd + P(a,p2))), ask:'Упрости (' + a + ' ≠ 0).',
+    type:'mono', vars:[a], ans:{c:k, e:o1(a,m2*n2-p2)},
+    hints:['Что сделать сначала? Не забудь, что число в скобке тоже возводится в степень.', RULE.prod + ' Потом: ' + RULE.div, 'Следующий шаг: ' + X('('+k+P(a,m2)+')^3 = '+ipow(k,3)+a+'^{'+(m2*3)+'}') + '.'],
+    solution:'<p>' + X('('+k+P(a,m2)+')^3 = '+ipow(k,3)+a+'^{'+(m2*3)+'}') + '.</p><p>' + M(F(ipow(k,3)+P(a,m2*3), kd+P(a,p2)) + ' = ' + F(ipow(k,3),kd) + ' · ' + a + '<sup>' + (m2*3) + '−' + p2 + '</sup> = ' + mono(k,o1(a,m2*3-p2),[a])) + '</p>',
+    diag:function(u){ if (u.c === 1 || u.c * kd === k) return {msg:'Число ' + k + ' в скобке тоже возводится в куб: ' + X(k+'^3') + ' = ' + ipow(k,3) + '.', cat:'coef_forgot'}; return null; }});
+};
+
+/* ===== Обязательные задания с проверенными ответами ===== */
+G.F1 = function(){ return T({gen:'F1', sig:'F1', simGen:'prodBig', skill:'prod', prompt:X('(p^3cd^6)^{18}'), ask:'Возведи в степень.', type:'mono', vars:['p','c','d'], coef:false, ans:{c:1,e:{p:54,c:18,d:108}},
+  hints:['Сколько множителей внутри скобки? Какой показатель у c?', RULE.prod + ' Буква без показателя — это показатель 1.', 'Следующий шаг: ' + X('(p^3)^{18} * c^{18} * (d^6)^{18}') + '.'],
+  solution:'<p>' + X('(p^3cd^6)^{18} = p^{3·18} * c^{1·18} * d^{6·18} = p^{54}c^{18}d^{108}') + '</p>',
+  diag:function(u){ if (u.e.p === 21 || u.e.d === 24) return {msg:addMsg(3,18), cat:'add_mult'}; if (u.e.c === 1 || u.e.c === 0) return {msg:'У c показатель 1, после возведения в 18-ю степень будет ' + X('c^{18}') + '.', cat:'skill:prod'}; return null; }}); };
+G.F2 = function(){ return T({gen:'F2', sig:'F2', simGen:'prod2', skill:'prod', prompt:X('(10a^2b^5)^4'), ask:'Возведи в степень.', type:'mono', vars:['a','b'], ans:{c:10000,e:{a:8,b:20}},
+  hints:['Какие множители стоят внутри скобки? Перечисли их все, включая число.', RULE.prod, 'Следующий шаг: ' + X('10^4 * (a^2)^4 * (b^5)^4') + '.'],
+  solution:'<p>' + X('(10a^2b^5)^4 = 10^4 * (a^2)^4 * (b^5)^4 = 10000a^8b^{20}') + '</p><p>' + X('10^4 = 10·10·10·10 = 10000') + '.</p>',
+  diag:function(u){ if (u.c === 10) return {msg:'Число 10 стоит внутри скобки, поэтому его тоже нужно возвести в 4-ю степень: ' + X('10^4') + ' = 10000.', cat:'coef_forgot'}; if (u.c === 40) return {msg:X('10^4') + ' — это 10·10·10·10, а не 10·4.', cat:'calc'}; if (u.e.a === 6 || u.e.b === 9) return {msg:addMsg(2,4), cat:'add_mult'}; return null; }}); };
+G.F3 = function(){ return T({gen:'F3', sig:'F3', simGen:'inv2', skill:'inv', prompt:X('81m^2p^2q^2'), ask:'Запиши в виде квадрата одночлена: одна скобка во второй степени.', type:'powprod', N:2, vars:['m','p','q'], target:{c:81,e:{m:2,p:2,q:2}}, ans:{k:9,e:{m:1,p:1,q:1}},
+  hints:['Какое число в квадрате даёт 81? Какой показатель у букв внутри скобки?', RULE.inv, 'Следующий шаг: ' + X('81 = 9^2') + ', поэтому ' + X('81m^2p^2q^2 = 9^2m^2p^2q^2') + '.'],
+  solution:'<p>' + X('81 = 9^2') + ', значит ' + X('81m^2p^2q^2 = 9^2 * m^2 * p^2 * q^2 = (9mpq)^2') + '.</p><p>Запись ' + X('81(mpq)^2') + ' тоже равна исходному выражению, но это ещё не одна степень произведения: число 81 осталось за скобкой.</p>'}); };
+G.F4 = function(){ return T({gen:'F4', sig:'F4', simGen:'inv2', skill:'inv', prompt:X('81c^8d^{16}f^{28}'), ask:'Запиши в виде квадрата одночлена.', type:'powprod', N:2, vars:['c','d','f'], target:{c:81,e:{c:8,d:16,f:28}}, ans:{k:9,e:{c:4,d:8,f:14}},
+  hints:['Какое число в квадрате даёт 81? Какой показатель, умноженный на 2, даёт 8? 16? 28?', RULE.inv, 'Следующий шаг: ' + X('81 = 9^2') + ', ' + X('c^8 = (c^4)^2') + '.'],
+  solution:'<p>' + X('81 = 9^2, c^8 = (c^4)^2, d^{16} = (d^8)^2, f^{28} = (f^{14})^2') + '.</p><p>' + X('81c^8d^{16}f^{28} = (9c^4d^8f^{14})^2') + '</p>'}); };
+G.F5 = function(){ var e = {2:[4,4],5:[2,4]}; var sol = numSolution(['Разложим: ' + X('10 = 2 * 5') + ', поэтому ' + X('10^4 = (2 * 5)^4 = 2^4 * 5^4') + '.', M(F(S('5^2 * 2^4'), S('10^4')) + ' = ' + F(S('5^2 * 2^4'), S('2^4 * 5^4')))], e, [2,5]);
+  return T({gen:'F5', sig:'F5', simGen:'numdec', skill:'num', prompt:M(F(S('5^2 * 2^4'), S('10^4'))), ask:'Найди значение. Ответ — несократимая дробь.', type:'nfrac', ans:{n:1,d:25},
+  hints:['На какие множители раскладывается 10?', RULE.num + ' ' + RULE.prod, 'Следующий шаг: ' + X('10^4 = 2^4 * 5^4') + '.'], solution:sol.html,
+  diag:function(u){ if (u.n.c === 25 && u.d.c === 1) return {msg:'Множителей 5 больше в знаменателе (4 против 2), поэтому ' + X('5^2') + ' остаётся в знаменателе.', cat:'remainder'}; return null; }}); };
+G.F6 = function(){ var e = {3:[9,8],5:[10,8]}; var sol = numSolution(['Разложим: ' + X('27 = 3^3, 25 = 5^2, 15 = 3 * 5') + '.', X('27^3 = (3^3)^3 = 3^9') + ', ' + X('25^5 = (5^2)^5 = 5^{10}') + ', ' + X('15^8 = 3^8 * 5^8') + '.'], e, [3,5]);
+  return T({gen:'F6', sig:'F6', simGen:'numdec2', skill:'num', prompt:M(F(S('27^3 * 25^5'), S('15^8'))), ask:'Найди значение, не вычисляя больших степеней.', type:'nfrac', ans:{n:75,d:1},
+  hints:['Как записать 27, 25 и 15 через простые числа?', RULE.num + ' ' + RULE.pp, 'Следующий шаг: ' + X('27 = 3^3, 25 = 5^2, 15 = 3 * 5') + '.'], solution:sol.html}); };
+G.F7 = function(){ var e = {5:[9,6],7:[6,6]}; var sol = numSolution(['Разложим: ' + X('125 = 5^3, 49 = 7^2, 35 = 5 * 7') + '.', X('(125 * 49)^3 = (5^3 * 7^2)^3 = 5^9 * 7^6') + ', ' + X('35^6 = 5^6 * 7^6') + '.'], e, [5,7]);
+  return T({gen:'F7', sig:'F7', simGen:'numdec2', skill:'num', prompt:M(F(S('(125 * 49)^3'), S('35^6'))), ask:'Найди значение, не вычисляя больших степеней.', type:'nfrac', ans:{n:125,d:1},
+  hints:['Как записать 125, 49 и 35 через простые числа?', RULE.num + ' ' + RULE.prod + ' ' + RULE.pp, 'Следующий шаг: ' + X('(125 * 49)^3 = (5^3 * 7^2)^3') + '.'], solution:sol.html}); };
+
+function makeTask(gen){ return G[gen](); }
+function freshTask(gens, avoid){
+  var t;
+  for (var i = 0; i < 25; i++) { t = makeTask(pick(gens)); if (!avoid || avoid.indexOf(t.sig) < 0) return t; }
+  return t;
+}
+/* ===================== Карточки правил ===================== */
+var CARDS = [
+ {id:'mult', t:'1. Умножение степеней', f:X('a^m * a^n = a^{m+n}'),
+  words:'Если степени с одинаковым основанием умножаются, основание оставляем тем же, а показатели складываем.',
+  why:'<p>' + X('a^3 * a^2 = (a·a·a) · (a·a) = a·a·a·a·a = a^5') + '</p><p>Сначала было 3 множителя a, потом ещё 2. Всего 3 + 2 = 5.</p>',
+  numEx:X('2^3 * 2^2 = 2^5 = 32') + ' (проверка: 8 · 4 = 32).',
+  letEx:X('3x^4 * 5x^2 = (3 * 5) * x^{4+2} = 15x^6'),
+  err:'<p>' + X('a^3 * a^2 ≠ a^6') + ' — показатели при умножении не перемножаются.</p><p>' + X('2^3 * 2^2 ≠ 4^5') + ' — основание не меняется: 4⁵ = 1024, а верный ответ 32.</p><p>' + X('x^3 * y^5') + ' — показатели складывать нельзя: основания разные.</p>',
+  rev:'Обратно: ' + X('a^{m+n} = a^m * a^n') + '. Например, ' + X('a^9 = a^6 * a^3') + ' — так удобно увидеть, что сокращается в ' + M(F(S('a^9'),S('a^6'))) + '.',
+  gens:['mult1','mult2','mult3','diff']},
+ {id:'div', t:'2. Деление степеней', f:M(F(S('a^m'),S('a^n')) + ' = ' + S('a^{m−n}')) + ', a ≠ 0',
+  words:'Если степени с одинаковым основанием делятся, основание оставляем, а из показателя числителя вычитаем показатель знаменателя. На ноль делить нельзя, поэтому a ≠ 0.',
+  why:'<p>Сократим одинаковые множители парами:</p>' + W('cancel',{b:'a',m:5,n:2}) + '<p>Если в знаменателе множителей больше, правило «вычесть показатели» в 7 классе удобнее заменить сокращением: остаток остаётся в знаменателе.</p>' + W('cancel',{b:'a',m:6,n:9}) + '<p>' + M(F(S('a^6'),S('a^9')) + ' = ' + F('1',S('a^3'))) + ', а не 0: каждая пара ' + M(F('a','a')) + ' равна 1.</p>',
+  numEx:M(F(S('3^5'),S('3^3')) + ' = 3<sup>5−3</sup> = 3<sup>2</sup> = 9') + ' (проверка: 243 : 27 = 9).',
+  letEx:M(F(S('12a^7b^4'),S('4a^2b')) + ' = 3a<sup>5</sup>b<sup>3</sup>'),
+  err:'<p>' + M(F(S('a^8'),S('a^2')) + ' ≠ a<sup>4</sup>') + ' — показатели вычитаются, а не делятся: верно ' + X('a^6') + '.</p><p>' + M(F(S('a^6'),S('a^9'))) + ' ≠ 0 и ≠ ' + X('a^3') + ' — остаток в знаменателе: ' + M(F('1',S('a^3'))) + '.</p>',
+  rev:'Обратно: ' + X('a^m = a^{m−n} * a^n') + '. Например, чтобы сократить ' + M(F(S('a^{10}'),S('a^4'))) + ', запиши ' + X('a^{10} = a^6 * a^4') + '.',
+  gens:['div1','div2','divLess']},
+ {id:'pp', t:'3. Степень в степени', f:X('(a^m)^n = a^{m·n}'),
+  words:'Если степень возводят в степень, основание оставляем, а показатели перемножаем.',
+  why:'<p>' + X('(a^2)^3 = (a·a) · (a·a) · (a·a) = a^6') + '</p><p>Три скобки по 2 множителя — всего 2 · 3 = 6.</p><h3>Сравни рядом</h3>' + W('compare'),
+  numEx:X('(2^2)^3 = 2^6 = 64') + ' (проверка: 4³ = 64).',
+  letEx:X('(x^4)^5 = x^{20}'),
+  err:'<p>' + X('(a^2)^3 ≠ a^5') + ' — складывают показатели при умножении степеней, а здесь степень в степени.</p>',
+  rev:'Обратно: ' + X('a^{mn} = (a^m)^n') + '. Например, ' + X('a^{12} = (a^4)^3 = (a^6)^2') + ', ' + X('81 = 3^4 = (3^2)^2 = 9^2') + '.',
+  gens:['pp1','cmp','pp2','inv1']},
+ {id:'prod', t:'4. Степень произведения', f:X('(ab)^n = a^nb^n'),
+  words:'Чтобы возвести в степень произведение, возводят в эту степень каждый множитель, в том числе число.',
+  why:'<p>' + X('(ab)^3 = (ab) · (ab) · (ab) = (a·a·a) · (b·b·b) = a^3b^3') + '</p><p>Множители можно переставлять, поэтому все a собираются вместе и все b — вместе.</p>',
+  numEx:X('(2 * 5)^3 = 2^3 * 5^3 = 8 * 125 = 1000') + ', и действительно ' + X('10^3 = 1000') + '.',
+  letEx:X('(10a^2b^5)^4 = 10^4 * (a^2)^4 * (b^5)^4 = 10000a^8b^{20}'),
+  err:'<p>' + X('(10a^2b^5)^4 ≠ 10a^8b^{20}') + ' — число 10 внутри скобки тоже возводится в степень.</p><p>' + X('(a + b)^2 ≠ a^2 + b^2') + ' — это правило для произведения, а не для суммы. Проверка: ' + X('(1 + 2)^2 = 9') + ', а ' + X('1^2 + 2^2 = 5') + '.</p>',
+  rev:'Обратно: ' + X('a^nb^n = (ab)^n') + '. Например, ' + X('81m^2p^2q^2 = 9^2m^2p^2q^2 = (9mpq)^2') + ' и ' + X('2^4 * 5^4 = 10^4') + '. Запись ' + X('81(mpq)^2') + ' верна, но преобразование не закончено.',
+  gens:['prod1','prod2','prodBig','inv2']},
+ {id:'frac', t:'5. Степень дроби', f:M('(' + F('a','b') + ')<sup>n</sup> = ' + F(S('a^n'),S('b^n'))) + ', b ≠ 0',
+  words:'Чтобы возвести дробь в степень, возводят в степень и числитель, и знаменатель.',
+  why:'<p>' + M('(' + F('a','b') + ')<sup>3</sup> = ' + F('a','b') + ' · ' + F('a','b') + ' · ' + F('a','b') + ' = ' + F('a·a·a','b·b·b') + ' = ' + F(S('a^3'),S('b^3'))) + '</p><p>При умножении дробей числители перемножаются и знаменатели перемножаются.</p>',
+  numEx:M('(' + F('2','3') + ')<sup>3</sup> = ' + F(S('2^3'),S('3^3')) + ' = ' + F('8','27')),
+  letEx:M('(' + F(S('2x^2'),'y') + ')<sup>3</sup> = ' + F(S('8x^6'),S('y^3'))),
+  err:'<p>' + M('(' + F('2','3') + ')<sup>2</sup> ≠ ' + F('4','3')) + ' — знаменатель тоже возводится в степень.</p><p>' + M(F('1',S('x^3')) + ' · ' + F('1',S('y^5')) + ' = ' + F('1',S('x^3y^5'))) + ', а не ' + M(F('1',S('(xy)^8'))) + ' — основания x и y разные.</p>',
+  rev:'Обратно: ' + M(F(S('a^n'),S('b^n')) + ' = (' + F('a','b') + ')<sup>n</sup>') + '. Например, ' + M(F(S('10^4'),S('5^4')) + ' = (' + F('10','5') + ')<sup>4</sup> = 2<sup>4</sup> = 16') + '.',
+  gens:['fracpow','recip']},
+ {id:'zero', t:'Дополнительно: нулевой показатель', f:X('a^0 = 1') + ', a ≠ 0',
+  words:'Любое число, кроме нуля, в нулевой степени равно 1. Выражение 0⁰ не определяют.',
+  why:'<p>' + M(F(S('a^3'),S('a^3'))) + ' = 1, потому что числитель и знаменатель одинаковые. А по правилу деления ' + M(F(S('a^3'),S('a^3')) + ' = a<sup>3−3</sup> = a<sup>0</sup>') + '. Чтобы правило работало и здесь, договорились: ' + X('a^0 = 1') + '.</p><p>При a = 0 так рассуждать нельзя: делить на 0 нельзя.</p>',
+  numEx:X('7^0 = 1, (−5)^0 = 1, 1000^0 = 1'),
+  letEx:X('5x^0 = 5 * 1 = 5') + ' при x ≠ 0',
+  err:'<p>' + X('5^0 ≠ 0') + ' и ' + X('5^0 ≠ 5') + '. Верно: ' + X('5^0 = 1') + '.</p>',
+  rev:'Обратно: число 1 можно записать как ' + X('a^0') + ' (при a ≠ 0) — иногда это помогает увидеть одинаковый вид выражения.',
+  gens:['zero']},
+ {id:'traps', t:'Ловушки: сумма и минус', f:X('(a + b)^2 ≠ a^2 + b^2') + ';  ' + X('(−2)^4 ≠ −2^4'),
+  words:'Правило степени произведения работает только для произведения. Минус входит в основание, только если стоит внутри скобок.',
+  why:'<p>Проверим на числах: ' + X('(1 + 2)^2 = 3^2 = 9') + ', а ' + X('1^2 + 2^2 = 1 + 4 = 5') + '. 9 ≠ 5, значит, «возвести каждое слагаемое» нельзя.</p><p>' + X('(−2)^4 = (−2)·(−2)·(−2)·(−2) = 16') + ' — минус внутри скобок, четыре минуса дают плюс.</p><p>' + X('−2^4 = −(2·2·2·2) = −16') + ' — скобок нет, в степень возводится только 2.</p>',
+  numEx:X('(−3)^2 = 9') + ', ' + X('−3^2 = −9') + ', ' + X('(2 + 3)^2 = 25'),
+  letEx:X('(ab)^2 = a^2b^2') + ' — можно; ' + X('(a + b)^2') + ' — так нельзя.',
+  err:'<p>' + X('(2 + 3)^2 ≠ 4 + 9') + '. Сначала считаем в скобках: ' + X('5^2 = 25') + '.</p><p>' + X('x^3 * y^5 ≠ (xy)^8') + ' — разные основания.</p>',
+  rev:'Обратная запись в виде степени тоже требует произведения: ' + X('4x^2 = (2x)^2') + ', а ' + X('4 + x^2') + ' так записать нельзя.',
+  gens:['minus','sum','diff']}
+];
+function cardById(id){ return CARDS.filter(function(c){ return c.id === id; })[0]; }
+function miniCard(id){
+  var c = cardById(id); if (!c) return '';
+  return '<div class="formula">' + c.f + '</div><p>' + c.words + '</p><div class="wrongbox"><b>Типичная ошибка.</b> ' + c.err + '</div>';
+}
+
+/* ===================== Уроки «Разобраться с нуля» ===================== */
+var LESSONS = [
+ {t:'Что такое степень', s:[
+  {h:'Степень — это короткая запись', b:'<p>Вместо ' + X('a·a·a·a') + ' пишут ' + X('a^4') + '.</p><p>a — <b>основание</b> (что умножаем), 4 — <b>показатель</b> (сколько одинаковых множителей).</p>',
+   q:function(){ return CH({skill:'mult', prompt:X('5^3'), ask:'Что здесь основание?', opts:[['5',1,'Основание — то, что умножаем: 5·5·5.'],['3',0,'3 — показатель: он говорит, сколько раз взять множитель 5.'],['15',0,'15 = 5·3, но степень — это не умножение основания на показатель.']]}); }},
+  {h:'Показатель — не множитель', b:'<p>' + X('2^3 = 2·2·2 = 8') + ', а не 2·3 = 6.</p>',
+   q:function(){ return IN({skill:'mult', prompt:X('3^2'), ask:'Вычисли.', ans:9, d:{6:['3² — это 3·3, а не 3·2.','calc']}}); }},
+  {h:'Показатель 1', b:'<p>' + X('a^1 = a') + '. Если у буквы не написан показатель, он равен 1.</p>',
+   q:function(){ return IN({skill:'mult', prompt:X('b^5'), ask:'Сколько одинаковых множителей b в этой записи?', ans:5}); }}]},
+ {t:'Умножение степеней', s:[
+  {h:'Считаем множители', b:'<p>' + X('a^3 * a^2 = (a·a·a) · (a·a)') + '</p><p>Всего 3 + 2 = 5 множителей: ' + X('a^5') + '.</p>',
+   q:function(){ return IN({skill:'mult', prompt:X('a^4 * a^3 = a^{?}'), ask:'Какой показатель получится?', ans:7, d:{12:[mulMsg(4,3),'add_mult']}}); }},
+  {h:'Только одинаковые основания', b:'<p>Правило ' + X('a^m * a^n = a^{m+n}') + ' работает, только если основания одинаковые.</p><p>' + X('a^2 * b^3') + ' — основания разные, одной степенью это не записать.</p>',
+   q:function(){ return CH({skill:'mult', cat:'diff_bases', prompt:X('x^3 * y^5'), ask:'Можно ли сложить показатели?', opts:[['Да, получится ' + X('x^8'),0,'Нельзя: x и y — разные основания.','diff_bases'],['Нет, основания разные',1,'Верно. Выражение остаётся ' + X('x^3y^5') + '.']]}); }},
+  {h:'С числами', b:'<p>' + X('2^3 * 2^2 = 2^5 = 32') + '. Проверка: 8 · 4 = 32.</p>',
+   q:function(){ return IN({skill:'mult', prompt:X('3^2 * 3 = 3^{?}'), ask:'Какой показатель? (У 3 без показателя показатель 1.)', ans:3, d:{2:['Множитель 3 без показателя — это ' + X('3^1') + '. 2 + 1 = 3.']}}); }}]},
+ {t:'Деление и сокращение', s:[
+  {h:'Сокращаем пары', b:W('cancel',{b:'a',m:5,n:2}),
+   q:function(){ return IN({skill:'div', prompt:M(F(S('a^7'),S('a^3')) + ' = a<sup>?</sup>'), ask:'Сколько множителей a останется в числителе?', ans:4}); }},
+  {h:'Если снизу больше', b:W('cancel',{b:'a',m:6,n:9}) + '<p>Нажми «Сократить все пары» и посмотри, где остались множители.</p>',
+   q:function(){ return CH({skill:'div', cat:'remainder', prompt:M(F(S('a^2'),S('a^5'))), ask:'Чему это равно (a ≠ 0)?', opts:[[X('a^3'),0,'Множителей больше в знаменателе, поэтому остаток остаётся внизу.','remainder'],[M(F('1',S('a^3'))),1,'Две пары сократились, сверху осталась 1, снизу — три множителя.'],['0',0,'Не 0: каждая пара a/a равна 1.','remainder']]}); }},
+  {h:'Почему a ≠ 0', b:'<p>Степень с основанием 0 равна 0, а на 0 делить нельзя. Поэтому в правиле деления пишут условие a ≠ 0.</p>',
+   q:function(){ return CH({skill:'div', prompt:M(F(S('a^5'),S('a^2'))), ask:'При каком a это выражение не имеет смысла?', opts:[['при a = 0',1,'Знаменатель станет 0, а делить на 0 нельзя.'],['при a = 1',0,'При a = 1 получится 1/1 = 1 — всё в порядке.'],['при a = 2',0,'При a = 2 получится 32/4 = 8 — всё в порядке.']]}); }}]},
+ {t:'Степень в степени', s:[
+  {h:'Раскрываем скобку', b:'<p>' + X('(a^2)^3') + ' — это ' + X('a^2') + ', взятое 3 раза:</p><p>' + X('(a·a) · (a·a) · (a·a)') + '</p>',
+   q:function(){ return IN({skill:'pp', prompt:X('(a·a) · (a·a) · (a·a)'), ask:'Сколько всего множителей a?', ans:6, d:{5:[addMsg(2,3),'add_mult']}}); }},
+  {h:'Правило', b:'<p>' + X('(a^m)^n = a^{m·n}') + ': m множителей в каждой из n скобок.</p>',
+   q:function(){ return IN({skill:'pp', prompt:X('(x^4)^2 = x^{?}'), ask:'Какой показатель?', ans:8, d:{6:[addMsg(4,2),'add_mult']}}); }}]},
+ {t:'Складывать или умножать?', s:[
+  {h:'Сравни два выражения', b:'<p>Для каждого выражения сначала определи действие, а потом — что делать с показателями.</p>' + W('compare'),
+   q:function(){ return G.cmp(); }}]},
+ {t:'Степень произведения', s:[
+  {h:'Каждый множитель', b:'<p>' + X('(ab)^3 = ab · ab · ab = (a·a·a)(b·b·b) = a^3b^3') + '</p>',
+   q:function(){ return CH({skill:'prod', prompt:X('(xy)^4'), ask:'Чему это равно?', opts:[[X('xy^4'),0,'Степень действует на весь множитель в скобке: и на x, и на y.','skill:prod'],[X('x^4y^4'),1,'Каждый множитель возводится в 4-ю степень.'],[X('x^4 + y^4'),0,'Здесь произведение, а не сумма: знака «+» не появляется.']]}); }},
+  {h:'Число тоже множитель', b:'<p>' + X('(2a)^3 = 2^3 * a^3 = 8a^3') + ', а не ' + X('2a^3') + '.</p>',
+   q:function(){ return T({skill:'prod', cat:'coef_forgot', prompt:X('(3x)^2'), ask:'Возведи в степень.', type:'mono', vars:['x'], ans:{c:9,e:{x:2}}, diag:function(u){ return u.c === 3 ? {msg:'Число 3 в скобке тоже возводится в квадрат: 3² = 9.', cat:'coef_forgot'} : u.c === 6 ? {msg:'3² = 3·3 = 9, а не 3·2.', cat:'calc'} : null; }}); }}]},
+ {t:'Степень дроби', s:[
+  {h:'Числитель и знаменатель', b:'<p>' + M('(' + F('a','b') + ')<sup>3</sup> = ' + F('a','b') + '·' + F('a','b') + '·' + F('a','b') + ' = ' + F(S('a^3'),S('b^3'))) + '</p>',
+   q:function(){ return T({skill:'frac', prompt:M('(' + F('x','y') + ')<sup>4</sup>'), ask:'Возведи дробь в степень.', type:'frac', vars:['x','y'], ans:{n:{c:1,e:{x:4}}, d:{c:1,e:{y:4}}}}); }},
+  {h:'Умножение дробей со степенями', b:'<p>' + M(F('1',S('x^3')) + ' · ' + F('1',S('y^5')) + ' = ' + F('1',S('x^3y^5'))) + '. Знаменатели перемножаются, но показатели не складываются: основания разные.</p>',
+   q:function(){ return CH({skill:'frac', cat:'diff_bases', prompt:M(F('1',S('a^2')) + ' · ' + F('1',S('b^4'))), ask:'Чему это равно?', opts:[[M(F('1',S('a^2b^4'))),1,'Знаменатели перемножились, показатели остались у своих букв.'],[M(F('1',S('(ab)^6'))),0,'Нельзя сложить 2 и 4: основания a и b разные.','diff_bases'],[M(F('1',S('ab^6'))),0,'Показатель 2 был у a, он не может перейти к b.','diff_bases']]}); }}]},
+ {t:'Запись в виде степени', s:[
+  {h:'Обратное применение', b:'<p>Иногда нужно наоборот собрать степень: ' + X('a^nb^n = (ab)^n') + '.</p><p>' + X('81m^2p^2q^2 = 9^2 * m^2 * p^2 * q^2 = (9mpq)^2') + '. Число тоже записываем как квадрат: ' + X('81 = 9^2') + '.</p>',
+   q:function(){ return T({skill:'inv', prompt:X('4x^2y^2'), ask:'Запиши в виде квадрата одночлена.', type:'powprod', N:2, vars:['x','y'], target:{c:4,e:{x:2,y:2}}, ans:{k:2,e:{x:1,y:1}}}); }},
+  {h:'Верно, но не закончено', b:'<p>' + X('81(mpq)^2') + ' равно ' + X('81m^2p^2q^2') + ', но это ещё не одна степень: число 81 стоит снаружи. Чтобы закончить, внеси его в скобку как ' + X('9^2') + '.</p>',
+   q:function(){ return CH({skill:'inv', prompt:X('25a^2b^2'), ask:'Какая запись — одна степень произведения?', opts:[[X('25(ab)^2'),0,'Верно по значению, но не закончено: 25 осталось за скобкой.','unfinished'],[X('(5ab)^2'),1,'Число 25 = 5² тоже внесено в скобку.'],[X('(25ab)^2'),0,'Тогда число возведётся в квадрат: 25² = 625.','inv_coef']]}); }}]},
+ {t:'Разложение чисел', s:[
+  {h:'Зачем раскладывать', b:'<p>' + X('10 = 2 * 5, 15 = 3 * 5, 35 = 5 * 7, 27 = 3^3, 49 = 7^2, 81 = 3^4 = 9^2, 125 = 5^3') + '.</p><p>Разложения помогают увидеть одинаковые основания и сократить, не вычисляя огромных чисел.</p>',
+   q:function(){ return CH({skill:'num', prompt:'15', ask:'Как разложить 15 на простые множители?', opts:[['3 · 5',1,'Да, 15 = 3·5. Тогда ' + X('15^8 = 3^8 * 5^8') + '.'],['3²',0,'3² = 9.'],['5 · 5',0,'5·5 = 25.']]}); }},
+  {h:'Пример', b:'<p>' + M(F(S('5^2 * 2^4'),S('10^4'))) + ': раскладываем ' + X('10^4 = 2^4 * 5^4') + ', сокращаем ' + X('2^4') + ' полностью, от пятёрок остаётся ' + M(F('1',S('5^2'))) + '.</p>',
+   q:function(){ return IN({skill:'num', prompt:M(F(S('5^2'),S('5^4')) + ' = ' + F('1', '5<sup>?</sup>')), ask:'Какой показатель останется в знаменателе?', ans:2}); }}]},
+ {t:'Дополнительно: нулевой показатель', s:[
+  {h:'Откуда a⁰ = 1', b:'<p>' + M(F(S('a^3'),S('a^3'))) + ' = 1. По правилу деления это ' + X('a^{3−3} = a^0') + '. Поэтому договорились: ' + X('a^0 = 1') + ' при a ≠ 0.</p><p>Выражение ' + X('0^0') + ' не определяют.</p>',
+   q:function(){ return IN({skill:'zero', prompt:X('7^0'), ask:'Чему равно значение?', ans:1, d:{0:['Нулевая степень даёт 1, а не 0.'],7:['Нулевая степень не оставляет число без изменений: 7⁰ = 1.']}}); }}]},
+ {t:'Ловушки: сумма и минус', s:[
+  {h:'Сумма — не произведение', b:'<p>' + X('(1 + 2)^2 = 3^2 = 9') + ', но ' + X('1^2 + 2^2 = 5') + '. Значит, ' + X('(a + b)^2 ≠ a^2 + b^2') + '.</p>',
+   q:function(){ return IN({skill:'traps', cat:'sum_pow', prompt:X('(2 + 3)^2'), ask:'Вычисли.', ans:25, d:{13:['Сначала считай сумму в скобках: 2 + 3 = 5, потом 5² = 25.','sum_pow']}}); }},
+  {h:'Где стоит минус', b:'<p>' + X('(−2)^4 = (−2)(−2)(−2)(−2) = 16') + ' — минус в скобках, он часть основания.</p><p>' + X('−2^4 = −(2·2·2·2) = −16') + ' — скобок нет, в степень возводится только 2.</p>',
+   q:function(){ return IN({skill:'traps', cat:'minus', sign:true, prompt:X('−3^2'), ask:'Вычисли.', ans:-9, d:{9:['Скобок нет, поэтому в квадрат возводится только 3, а минус остаётся: −(3·3) = −9.','minus']}}); }}]}
+];
+
+/* ===================== «Выбери правило» ===================== */
+var RULE_OPTS = [['mult','Умножение степеней с одинаковым основанием'],['div','Деление степеней с одинаковым основанием'],['pp','Степень в степени'],['prod','Степень произведения'],['frac','Степень дроби'],['dec','Сначала разложить число на множители'],['none','Ни одно из правил: так упростить нельзя']];
+var CHOOSE = [
+ {e:X('a^4 * a^7'), ok:['mult'], ex:'Две степени с основанием a умножаются: ' + X('a^{4+7} = a^{11}') + '.'},
+ {e:M(F(S('x^9'),S('x^4'))), ok:['div'], ex:'Делятся степени с основанием x: ' + X('x^{9−4} = x^5') + '.'},
+ {e:X('(y^3)^5'), ok:['pp'], ex:'Степень ' + X('y^3') + ' возводится в 5-ю степень: ' + X('y^{15}') + '.'},
+ {e:X('(3ab)^2'), ok:['prod'], ex:'В скобке произведение 3·a·b: ' + X('3^2a^2b^2 = 9a^2b^2') + '.', fb:{mult:'Здесь нет двух степеней с одинаковым основанием, которые умножаются. Внешняя степень действует на произведение.'}},
+ {e:M('(' + F('x','y') + ')<sup>4</sup>'), ok:['frac'], ex:M('(' + F('x','y') + ')<sup>4</sup> = ' + F(S('x^4'),S('y^4'))) + '.'},
+ {e:X('x^3 * y^5'), ok:['none'], cat:'diff_bases', ex:'Основания x и y разные — показатели не складываются, выражение остаётся ' + X('x^3y^5') + '.', fb:{mult:'Правило умножения работает только для одинаковых оснований, а здесь x и y.', prod:'Чтобы собрать ' + X('(xy)^n') + ', у x и y должны быть одинаковые показатели.'}},
+ {e:X('(a^5 * a^2)^3'), ok:['mult','prod'], ex:'Оба пути верны. Можно сначала внутри скобки: ' + X('(a^7)^3 = a^{21}') + '. Можно сначала степень произведения: ' + X('(a^5)^3 * (a^2)^3 = a^{15} * a^6 = a^{21}') + '.'},
+ {e:M('(' + F(S('a^7'),S('a^3')) + ')<sup>2</sup>'), ok:['div','frac'], ex:'Оба пути верны: ' + M('(a<sup>4</sup>)<sup>2</sup> = a<sup>8</sup>') + ' или ' + M(F(S('a^{14}'),S('a^6')) + ' = a<sup>8</sup>') + '.'},
+ {e:X('2^5 * 2^3 * 2'), ok:['mult'], ex:X('2^{5+3+1} = 2^9') + '. У последней двойки показатель 1.'},
+ {e:X('(2x^3)^4'), ok:['prod'], ex:X('2^4 * (x^3)^4 = 16x^{12}') + '. Потом для ' + X('(x^3)^4') + ' пригодится и степень в степени.'},
+ {e:X('(a^2)^3 * a^4'), ok:['pp'], cat:'add_mult', ex:'Сначала избавимся от скобки: ' + X('(a^2)^3 = a^6') + ', потом ' + X('a^6 * a^4 = a^{10}') + '.', fb:{mult:'Показатель 2 стоит внутри скобки, на него действует внешний показатель 3. Пока скобка не раскрыта, складывать 2 и 4 нельзя.'}},
+ {e:M(F(S('a^6'),S('a^9'))), ok:['div'], ex:'Сокращаем 6 пар: ' + M(F('1',S('a^3'))) + '. Остаток в знаменателе — там множителей было больше.'},
+ {e:M(F(S('5^2 * 2^4'),S('10^4'))), ok:['dec'], cat:'skill:num', ex:X('10 = 2 * 5') + ', значит ' + X('10^4 = 2^4 * 5^4') + '. Тогда появляются одинаковые основания.', fb:{div:'У 10 и у 2 разные основания. Сначала надо разложить 10 = 2·5.', prod:'Чтобы применить степень произведения, сначала нужно увидеть произведение: 10 = 2·5. Это и есть разложение.'}},
+ {e:X('(a + b)^2'), ok:['none'], cat:'sum_pow', ex:'В скобках сумма, а правила из списка — для произведения и частного. ' + X('(a + b)^2 ≠ a^2 + b^2') + ': при a = 1, b = 2 слева 9, справа 5.', fb:{prod:'В скобках не произведение, а сумма. Проверка: ' + X('(1 + 2)^2 = 9') + ', а ' + X('1^2 + 2^2 = 5') + '.'}},
+ {e:'Записать ' + X('81m^2p^2q^2') + ' в виде квадрата', ok:['prod'], ex:'Степень произведения в обратную сторону: ' + X('9^2m^2p^2q^2 = (9mpq)^2') + '.'},
+ {e:M(F(S('27^3'),S('3^5'))), ok:['dec'], cat:'skill:num', ex:X('27 = 3^3') + ', тогда ' + X('27^3 = (3^3)^3 = 3^9') + ', и ' + M(F(S('3^9'),S('3^5')) + ' = 3<sup>4</sup>') + '.', fb:{div:'Основания 27 и 3 разные. Сначала запиши 27 как степень тройки.'}},
+ {e:M('(' + F(S('x^3'),S('y^2')) + ')<sup>3</sup>'), ok:['frac'], ex:M(F(S('(x^3)^3'),S('(y^2)^3')) + ' = ' + F(S('x^9'),S('y^6'))) + '.'},
+ {e:X('(x^2y^3)^4'), ok:['prod'], ex:X('(x^2)^4 * (y^3)^4 = x^8y^{12}') + '.'}
+];
+var RULE_TXT = {mult:'Умножение степеней подходит, когда рядом стоят степени с одинаковым основанием и между ними знак умножения.', div:'Деление степеней подходит, когда степени с одинаковым основанием стоят в числителе и знаменателе.', pp:'Степень в степени подходит, когда степень стоит в скобках и вся скобка возводится в степень.', prod:'Степень произведения подходит, когда в скобках несколько множителей.', frac:'Степень дроби подходит, когда в степень возводится дробь.', dec:'Разложение нужно, когда основания — разные числа, но их можно связать: например, 10 = 2·5.', none:'Здесь всё же есть что преобразовать.'};
+function chooseTask(it){
+  return CH({skill:'mixed', prompt:it.e, ask:'Какое правило подходит для следующего шага?',
+    opts:RULE_OPTS.map(function(r){ var ok = it.ok.indexOf(r[0]) >= 0; return [r[1], ok, ok ? (it.ok.length > 1 ? 'Это один из верных путей. ' : '') + it.ex : ((it.fb && it.fb[r[0]]) || RULE_TXT[r[0]] + ' Здесь это не так.'), ok ? null : (it.cat || 'skill:mixed')]; }),
+    hints:['Посмотри на главное действие: что стоит рядом — умножение, деление, скобка в степени? Какие основания одинаковые?', 'Признаки правил: точка между степенями с одним основанием — умножение; дробь — деление; скобка со степенью в степени — степень в степени; несколько множителей в скобке — степень произведения.', 'Следующий шаг: назови, на что действует самый «внешний» показатель или знак.'],
+    solution:'<p>' + it.ex + '</p>'});
+}
+
+/* ===================== «Решаем вместе» ===================== */
+function st(task, after){ return {task:task, after:after}; }
+var TOGETHER = [
+ {t:'Степень произведения с числом', p:X('(10a^2b^5)^4'), sim:'prod2', steps:function(){ return [
+  st(CH({skill:'prod', ask:'На какие множители действует внешняя степень 4?', opts:[['только на ' + X('a^2') + ' и ' + X('b^5'),0,'Число 10 стоит внутри скобки, значит, это тоже множитель. Внешняя степень действует на каждый множитель, включая число.','coef_forgot'],['на 10, на ' + X('a^2') + ' и на ' + X('b^5'),1,''],['только на 10',0,'Буквы тоже стоят внутри скобки и тоже возводятся в степень.','skill:prod']],
+    hints:['Какие множители стоят внутри скобки? Перечисли их все.', RULE.prod, 'Следующий шаг: ' + X('(10a^2b^5)^4 = 10^4 * (a^2)^4 * (b^5)^4') + '.']}), X('(10a^2b^5)^4 = 10^4 * (a^2)^4 * (b^5)^4')),
+  st(IN({skill:'prod', cat:'calc', ask:'Сколько будет ' + X('10^4') + '?', ans:10000, d:{40:['10⁴ — это 10·10·10·10, а не 10·4.','calc'],1000:['Посчитай множители: 10·10·10·10 — четыре десятки, значит, четыре нуля.','calc']},
+    hints:['Сколько раз 10 умножается само на себя?', 'Степень числа — произведение одинаковых множителей: ' + X('10^4 = 10·10·10·10') + '.', 'Следующий шаг: 10·10 = 100, 100·10 = 1000, и ещё раз на 10.']}), X('10^4 = 10000')),
+  st(CH({skill:'pp', cat:'add_mult', ask:'Что делать с показателями в ' + X('(a^2)^4') + '?', opts:[['сложить: 2 + 4',0,'Складывают при умножении ' + X('a^2 * a^4') + '. Здесь степень возводится в степень: ' + X('(a·a)') + ' повторяется 4 раза.','add_mult'],['перемножить: 2 · 4',1,X('(a^2)^4 = (a·a)(a·a)(a·a)(a·a)') + ' — 2·4 множителей.']],
+    hints:['Здесь две степени умножаются или степень возводится в степень?', RULE.pp, 'Следующий шаг: распиши ' + X('(a^2)^4 = (a·a)(a·a)(a·a)(a·a)') + '.']}), ''),
+  st(IN({skill:'pp', ask:X('(a^2)^4 = a^{?}') + ' Впиши показатель.', ans:8, d:{6:[addMsg(2,4),'add_mult']}, hints:['Сколько скобок и сколько a в каждой?', RULE.pp, 'Следующий шаг: 2 · 4.']}), X('(a^2)^4 = a^8')),
+  st(IN({skill:'pp', ask:X('(b^5)^4 = b^{?}') + ' Впиши показатель.', ans:20, d:{9:[addMsg(5,4),'add_mult']}, hints:['Как в предыдущем шаге: что делаем с показателями?', RULE.pp, 'Следующий шаг: 5 · 4.']}), X('(b^5)^4 = b^{20}'))]; },
+  fin:X('(10a^2b^5)^4 = 10000a^8b^{20}')},
+ {t:'Большой показатель', p:X('(p^3cd^6)^{18}'), sim:'prodBig', steps:function(){ return [
+  st(CH({skill:'prod', ask:'На какие множители действует показатель 18?', opts:[['на ' + X('p^3') + ', c и ' + X('d^6'),1,''],['только на ' + X('p^3') + ' и ' + X('d^6'),0,'Буква c тоже стоит внутри скобки.','skill:prod']]}), X('(p^3)^{18} * c^{18} * (d^6)^{18}')),
+  st(IN({skill:'prod', ask:'Какой показатель у c внутри скобки?', ans:1, d:{0:['Если показатель не написан, он равен 1: c = c¹.']}, hints:['Сколько множителей c в записи «c»?','Буква без показателя — это показатель 1.','c = c¹.']}), X('c = c^1')),
+  st(IN({skill:'pp', ask:X('(p^3)^{18} = p^{?}'), ans:54, d:{21:[addMsg(3,18),'add_mult']}, hints:['Складывать или перемножать?', RULE.pp, '3 · 18 = 3 · 10 + 3 · 8.']}), X('(p^3)^{18} = p^{54}')),
+  st(IN({skill:'pp', ask:X('c^{18}') + ': какой показатель у c в ответе?', ans:18}), X('c^{1·18} = c^{18}')),
+  st(IN({skill:'pp', ask:X('(d^6)^{18} = d^{?}'), ans:108, d:{24:[addMsg(6,18),'add_mult']}, hints:['Складывать или перемножать?', RULE.pp, '6 · 18 = 6 · 10 + 6 · 8.']}), X('(d^6)^{18} = d^{108}'))]; },
+  fin:X('(p^3cd^6)^{18} = p^{54}c^{18}d^{108}')},
+ {t:'Сокращение: где остаток', p:M(F(S('a^6'),S('a^9'))), sim:'divLess', steps:function(){ return [
+  st(IN({skill:'div', ask:'Сколько пар «a сверху — a снизу» можно сократить?', ans:6, hints:['Сколько a в числителе? Сколько в знаменателе?','Сокращать можно, пока есть пара: столько, сколько множителей в меньшей степени.','В числителе 6 множителей — значит, 6 пар.']}), W('cancel',{b:'a',m:6,n:9})),
+  st(CH({skill:'div', cat:'remainder', ask:'Где останутся несокращённые множители a?', opts:[['в числителе',0,'Сверху было 6 множителей, и все 6 сократились. Лишние — снизу.','remainder'],['в знаменателе',1,'Снизу было 9, сократилось 6.'],['нигде, получится 0',0,'Сокращаются только пары, а снизу 3 множителя остались без пары.','remainder']]}), 'Сверху остаётся 1 (каждая пара ' + M(F('a','a')) + ' = 1), снизу ' + X('a·a·a') + '.'),
+  st(T({skill:'div', cat:'remainder', ask:'Запиши результат дробью.', type:'frac', vars:['a'], ans:{n:{c:1,e:{}},d:{c:1,e:{a:3}}}, diag:function(u){ return u.n.c === 0 ? {msg:'В числителе не 0, а 1: каждая сокращённая пара даёт 1.', cat:'remainder'} : null; }}), M(F(S('a^6'),S('a^9')) + ' = ' + F('1',S('a^3'))))]; },
+  fin:M(F(S('a^6'),S('a^9')) + ' = ' + F('1',S('a^3'))) + '. В числителе 1, а не 0.'},
+ {t:'Обратно: квадрат одночлена', p:X('81m^2p^2q^2 = (…)^2'), sim:'inv2', steps:function(){ return [
+  st(CH({skill:'inv', ask:'Какое правило используем?', opts:[['Степень произведения в обратную сторону: ' + X('a^2b^2 = (ab)^2'),1,''],['Умножение степеней: сложить показатели',0,'Складывать показатели у m, p, q нельзя — основания разные.','diff_bases']]}), ''),
+  st(IN({skill:'inv', cat:'inv_coef', ask:'81 = ?² Какое число в квадрате даёт 81?', ans:9, d:{3:['3² = 9. А 81 = 3⁴ = 9².','inv_coef'],81:['81² = 6561. Нужно число, квадрат которого равен 81.','inv_coef']}}), X('81 = 9^2')),
+  st(IN({skill:'inv', ask:X('m^2 = (m^{?})^2') + ' Какой показатель у m внутри скобки?', ans:1, d:{2:['Если внутри будет ' + X('m^2') + ', то ' + X('(m^2)^2 = m^4') + '.','add_mult']}}), X('81m^2p^2q^2 = 9^2 * m^2 * p^2 * q^2')),
+  st(G.F3(), X('(9mpq)^2'))]; },
+  fin:X('81m^2p^2q^2 = (9mpq)^2') + '. Запись ' + X('81(mpq)^2') + ' верна по значению, но не закончена.'},
+ {t:'Обратно: большие показатели', p:X('81c^8d^{16}f^{28} = (…)^2'), sim:'inv2', steps:function(){ return [
+  st(IN({skill:'inv', cat:'inv_coef', ask:'Какое число в квадрате даёт 81?', ans:9}), X('81 = 9^2')),
+  st(IN({skill:'inv', ask:X('c^8 = (c^{?})^2'), ans:4, d:{6:['Показатель не уменьшается на 2, а делится на 2: ? · 2 = 8.','add_mult']}}), X('c^8 = (c^4)^2')),
+  st(IN({skill:'inv', ask:X('d^{16} = (d^{?})^2'), ans:8, d:{14:['? · 2 = 16.','add_mult']}}), X('d^{16} = (d^8)^2')),
+  st(IN({skill:'inv', ask:X('f^{28} = (f^{?})^2'), ans:14, d:{26:['? · 2 = 28.','add_mult']}}), X('f^{28} = (f^{14})^2')),
+  st(G.F4(), X('(9c^4d^8f^{14})^2'))]; },
+  fin:X('81c^8d^{16}f^{28} = (9c^4d^8f^{14})^2')},
+ {t:'Числа: раскладываем 10', p:M(F(S('5^2 * 2^4'),S('10^4'))), sim:'numdec', steps:function(){ return [
+  st(CH({skill:'num', ask:'Как удобнее начать?', opts:[['Разложить 10 = 2 · 5',1,'Тогда появятся одинаковые основания 2 и 5.'],['Посчитать всё: 25 · 16 = 400, 10⁴ = 10000',1,'Так тоже можно: 400/10000 = 1/25. Но с большими степенями это трудно, поэтому дальше пойдём через разложение.'],['Сократить 2⁴ и 10⁴, вычтя показатели',0,'Основания 2 и 10 разные, так сокращать нельзя.','skill:num']]}), X('10 = 2 * 5')),
+  st(CH({skill:'prod', ask:X('10^4 = (2 * 5)^4 = ?'), opts:[[X('2^4 * 5^4'),1,''],[X('2^4 + 5^4'),0,'В скобках произведение, знак «+» не появляется.'],[X('2 * 5^4'),0,'Степень действует на оба множителя.','coef_forgot']]}), M(F(S('5^2 * 2^4'),S('2^4 * 5^4')))),
+  st(CH({skill:'num', ask:'Что можно сократить полностью?', opts:[[X('2^4') + ' сверху и снизу',1,X('2^4') + ' сверху и снизу — одинаковые, их частное 1.'],[X('5^2') + ' и ' + X('5^4') + ' полностью',0,'Сверху 2 пятёрки, снизу 4 — сократятся только 2 пары.','remainder']]}), M(F(S('5^2'),S('5^4')))),
+  st(IN({skill:'div', cat:'remainder', ask:M(F(S('5^2'),S('5^4')) + ' = ' + F('1','5<sup>?</sup>')), ans:2}), M(F('1',S('5^2')))),
+  st(T({skill:'num', ask:'Запиши ответ несократимой дробью.', type:'nfrac', ans:{n:1,d:25}}), M(F('1','25')))]; },
+  fin:M(F(S('5^2 * 2^4'),S('10^4')) + ' = ' + F('1','25'))},
+ {t:'Числа: 27, 25 и 15', p:M(F(S('27^3 * 25^5'),S('15^8'))), sim:'numdec2', steps:function(){ return [
+  st(CH({skill:'num', ask:'Какие разложения нужны?', opts:[[X('27 = 3^3, 25 = 5^2, 15 = 3 * 5'),1,''],[X('27 = 3 * 9, 25 = 5 * 5, 15 = 3 + 12'),0,'Сумма здесь не поможет: нужно произведение.'],[X('27 = 9^3, 25 = 5^2, 15 = 3 * 5'),0,X('9^3 = 729') + ', а не 27.','calc']]}), X('27 = 3^3, 25 = 5^2, 15 = 3 * 5')),
+  st(IN({skill:'pp', ask:X('27^3 = (3^3)^3 = 3^{?}'), ans:9, d:{6:[addMsg(3,3),'add_mult']}}), X('27^3 = 3^9')),
+  st(IN({skill:'pp', ask:X('25^5 = (5^2)^5 = 5^{?}'), ans:10, d:{7:[addMsg(2,5),'add_mult']}}), X('25^5 = 5^{10}')),
+  st(CH({skill:'prod', ask:X('15^8 = (3 * 5)^8 = ?'), opts:[[X('3^8 * 5^8'),1,''],[X('3 * 5^8'),0,'Степень действует на оба множителя.','coef_forgot']]}), M(F(S('3^9 * 5^{10}'),S('3^8 * 5^8')))),
+  st(IN({skill:'div', ask:M(F(S('3^9'),S('3^8')) + ' = 3<sup>?</sup>'), ans:1}), M(F(S('3^9'),S('3^8')) + ' = 3')),
+  st(IN({skill:'div', ask:M(F(S('5^{10}'),S('5^8')) + ' = 5<sup>?</sup>'), ans:2}), M(F(S('5^{10}'),S('5^8')) + ' = 5<sup>2</sup> = 25')),
+  st(IN({skill:'num', ask:'Перемножь: 3 · 25 = ?', ans:75}), '3 · 25 = 75')]; },
+  fin:M(F(S('27^3 * 25^5'),S('15^8')) + ' = 75')},
+ {t:'Числа: 125, 49 и 35', p:M(F(S('(125 * 49)^3'),S('35^6'))), sim:'numdec2', steps:function(){ return [
+  st(CH({skill:'num', ask:'Какие разложения нужны?', opts:[[X('125 = 5^3, 49 = 7^2, 35 = 5 * 7'),1,''],[X('125 = 5^2, 49 = 7^2, 35 = 5 * 7'),0,X('5^2 = 25') + ', а 125 = 5·5·5.','calc']]}), X('(125 * 49)^3 = (5^3 * 7^2)^3')),
+  st(IN({skill:'pp', ask:X('(5^3)^3 = 5^{?}'), ans:9, d:{6:[addMsg(3,3),'add_mult']}}), X('(5^3)^3 = 5^9')),
+  st(IN({skill:'pp', ask:X('(7^2)^3 = 7^{?}'), ans:6, d:{5:[addMsg(2,3),'add_mult']}}), X('(7^2)^3 = 7^6') + ', и ' + X('35^6 = 5^6 * 7^6')),
+  st(CH({skill:'num', ask:'Что сократится полностью в ' + M(F(S('5^9 * 7^6'),S('5^6 * 7^6'))) + '?', opts:[[X('7^6'),1,''],[X('5^9') + ' и ' + X('5^6'),0,'Сверху 9 пятёрок, снизу 6: три останутся.','remainder']]}), M(F(S('5^9'),S('5^6')))),
+  st(IN({skill:'div', ask:M(F(S('5^9'),S('5^6')) + ' = 5<sup>?</sup>'), ans:3}), X('5^3 = 125'))]; },
+  fin:M(F(S('(125 * 49)^3'),S('35^6')) + ' = 125')},
+ {t:'Произведение дробей', p:M(F('1',S('x^3')) + ' · ' + F('1',S('y^5'))), sim:'recip', steps:function(){ return [
+  st(CH({skill:'frac', ask:'Как умножают дроби?', opts:[['числитель на числитель, знаменатель на знаменатель',1,''],['складывают знаменатели',0,'При умножении дробей знаменатели перемножаются.']]}), M(F('1·1', S('x^3 * y^5')))),
+  st(CH({skill:'mult', cat:'diff_bases', ask:'Можно ли сложить показатели в ' + X('x^3 * y^5') + '?', opts:[['нет, основания разные',1,''],['да, получится ' + X('(xy)^8'),0,X('(xy)^8 = x^8y^8') + ' — совсем другое выражение.','diff_bases']]}), ''),
+  st(T({skill:'frac', ask:'Запиши результат одной дробью.', type:'frac', vars:['x','y'], ans:{n:{c:1,e:{}},d:{c:1,e:{x:3,y:5}}}}), M(F('1',S('x^3y^5'))))]; },
+  fin:M(F('1',S('x^3')) + ' · ' + F('1',S('y^5')) + ' = ' + F('1',S('x^3y^5')))},
+ {t:'Минус в основании', p:X('(−2)^4') + ' и ' + X('−2^4'), sim:'minus', steps:function(){ return [
+  st(CH({skill:'traps', cat:'minus', ask:'Что является основанием в ' + X('(−2)^4') + '?', opts:[['−2',1,'Минус стоит внутри скобок.'],['2',0,'Скобки включают минус в основание.','minus']]}), X('(−2)^4 = (−2)(−2)(−2)(−2)')),
+  st(IN({skill:'traps', cat:'minus', sign:true, ask:'Вычисли ' + X('(−2)^4') + '.', ans:16, d:{'-16':['Четыре минуса: (−)·(−) = +, и ещё раз (−)·(−) = +. Итог положительный.','minus']}}), X('(−2)^4 = 16')),
+  st(CH({skill:'traps', cat:'minus', ask:'Что является основанием в ' + X('−2^4') + '?', opts:[['2',1,'Скобок нет: степень относится только к 2.'],['−2',0,'Без скобок минус не входит в основание.','minus']]}), X('−2^4 = −(2·2·2·2)')),
+  st(IN({skill:'traps', cat:'minus', sign:true, ask:'Вычисли ' + X('−2^4') + '.', ans:-16, d:{16:['Сначала 2⁴ = 16, потом минус перед ним: −16.','minus']}}), X('−2^4 = −16'))]; },
+  fin:X('(−2)^4 = 16') + ', а ' + X('−2^4 = −16') + '.'},
+ {t:'Сумма в степени', p:X('(a + b)^2') + ' и ' + X('a^2 + b^2'), sim:'sum', steps:function(){ return [
+  st(IN({skill:'traps', ask:'Проверим при a = 1, b = 2. Чему равно ' + X('(1 + 2)^2') + '?', ans:9, d:{5:['Сначала сумма в скобках: 1 + 2 = 3, потом 3² = 9.','sum_pow']}}), X('(1 + 2)^2 = 9')),
+  st(IN({skill:'traps', ask:'А чему равно ' + X('1^2 + 2^2') + '?', ans:5}), X('1^2 + 2^2 = 5')),
+  st(CH({skill:'traps', cat:'sum_pow', ask:'Какой вывод?', opts:[[X('(a + b)^2 ≠ a^2 + b^2') + ': правило произведения к сумме не применяют',1,''],['Они равны',0,'9 ≠ 5 — значит, в общем случае не равны.','sum_pow']]}), '')]; },
+  fin:X('(a + b)^2 ≠ a^2 + b^2') + '. Правило ' + X('(ab)^n = a^nb^n') + ' — только для произведения.'}
+];
+
+/* ===================== Памятка ===================== */
+var MEMO = '<h3>Главное</h3><ul>' +
+ '<li>Одинаковые основания умножаются — показатели складываются: ' + X('a^3 * a^2 = a^5') + '.</li>' +
+ '<li>Степень в степени — показатели перемножаются: ' + X('(a^3)^2 = a^6') + '.</li>' +
+ '<li>При сокращении считай, сколько одинаковых множителей осталось и где: ' + M(F(S('a^6'),S('a^9')) + ' = ' + F('1',S('a^3'))) + '.</li>' +
+ '<li>Степень произведения действует на каждый множитель, включая число: ' + X('(10a^2)^4 = 10000a^8') + '.</li>' +
+ '<li>Степень дроби — и числитель, и знаменатель: ' + M('(' + F('a','b') + ')<sup>n</sup> = ' + F(S('a^n'),S('b^n'))) + '.</li>' +
+ '<li>Складывать показатели разных оснований нельзя: ' + X('x^3 * y^5') + ' остаётся как есть.</li>' +
+ '<li>' + X('(a + b)^2 ≠ a^2 + b^2') + ';  ' + X('(−2)^4 = 16') + ', ' + X('−2^4 = −16') + '.</li>' +
+ '<li>Дополнительно: ' + X('a^0 = 1') + ' при a ≠ 0; 0⁰ не определяют.</li></ul>' +
+ '<h3>Разложения</h3><p>' + X('10 = 2 * 5') + ';  ' + X('15 = 3 * 5') + ';  ' + X('35 = 5 * 7') + ';  ' + X('27 = 3^3') + ';  ' + X('49 = 7^2') + ';  ' + X('81 = 3^4 = 9^2') + ';  ' + X('125 = 5^3') + '.</p>' +
+ '<p>Зачем: разложение показывает одинаковые основания. Например, в ' + M(F(S('27^3 * 25^5'),S('15^8'))) + ' после разложения сокращаются степени 3 и 5 — и не нужно считать огромные числа.</p>' +
+ '<h3>Небольшие степени</h3><table class="ptab"><tr><th>2</th><td>' + [2,3,4,5,6,7,8,9,10].map(function(n){return X('2^'+n+'='+ipow(2,n));}).join(', ') + '</td></tr>' +
+ '<tr><th>3</th><td>' + [2,3,4,5].map(function(n){return X('3^'+n+'='+ipow(3,n));}).join(', ') + '</td></tr>' +
+ '<tr><th>5</th><td>' + [2,3,4].map(function(n){return X('5^'+n+'='+ipow(5,n));}).join(', ') + '</td></tr>' +
+ '<tr><th>7</th><td>' + X('7^2=49') + ', ' + X('7^3=343') + '</td></tr>' +
+ '<tr><th>10</th><td>' + X('10^2=100') + ', ' + X('10^3=1000') + ', ' + X('10^4=10000') + '</td></tr></table>';
+/* ===================== Учёт результатов ===================== */
+function statOk(skill){ var s = D.skills[skill] = D.skills[skill] || {ok:0, bad:0}; s.ok++; save(); }
+function statBad(skill){ var s = D.skills[skill] = D.skills[skill] || {ok:0, bad:0}; s.bad++; save(); }
+function logError(t, cat){
+  if (!CATS[cat]) cat = 'skill:' + t.skill;
+  D.errors[cat] = (D.errors[cat]||0) + 1;
+  D.recent.push({cat:cat, sig:t.sig || '', gen:t.gen || ''}); if (D.recent.length > 40) D.recent = D.recent.slice(-40);
+  save(); return cat;
+}
+function recentSigs(){ return D.recent.map(function(r){ return r.sig; }); }
+
+/* ===================== Навигация ===================== */
+var app = $('#app'), VIEWS = {}, timerId = null;
+function stopTimer(){ if (timerId) { clearInterval(timerId); timerId = null; } }
+function go(view){
+  var args = Array.prototype.slice.call(arguments, 1);
+  stopTimer();
+  VIEWS[view].apply(null, args);
+  window.scrollTo(0,0);
+  try { app.focus({preventScroll:true}); } catch (e) {}
+}
+function back(view, label){ return '<button class="btn sm ghost" type="button" data-go="' + view + '">← ' + label + '</button>'; }
+app.addEventListener('click', function(e){ var b = e.target.closest('[data-go]'); if (b) { var a = b.dataset.arg; go(b.dataset.go, a === undefined ? undefined : (isNaN(+a) ? a : +a)); } });
+$('#homeBtn').addEventListener('click', function(){ go('home'); });
+
+/* ===================== Памятка ===================== */
+var memo = $('#memo'), lastFocus = null;
+$('#memoBody').innerHTML = MEMO;
+function openMemo(){ lastFocus = document.activeElement; memo.hidden = false; $('.panel', memo).focus(); }
+function closeMemo(){ memo.hidden = true; if (lastFocus) try { lastFocus.focus(); } catch (e) {} }
+$('#memoBtn').addEventListener('click', openMemo);
+$('#memoClose').addEventListener('click', closeMemo);
+memo.addEventListener('click', function(e){ if (e.target === memo) closeMemo(); });
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !memo.hidden) closeMemo(); });
+
+/* ===================== Главная ===================== */
+VIEWS.home = function(){
+  var doneL = Object.keys(D.lessons).length;
+  var errN = Object.keys(D.errors).reduce(function(s,k){ return s + D.errors[k]; }, 0);
+  var lastT = D.tests.length ? D.tests[D.tests.length-1] : null;
+  function tile(v, t, s, extra){ return '<button class="tile" type="button" data-go="' + v + '"><b>' + t + '</b><span>' + s + '</span>' + (extra ? '<em>' + extra + '</em>' : '') + '</button>'; }
+  app.innerHTML = '<p class="lead">Разбираемся со свойствами степеней по одному действию: сначала понять, что происходит, потом выбрать правило и только после этого считать.</p>' +
+    '<div class="tiles">' +
+    tile('lessons','Разобраться с нуля','Короткие уроки: одна мысль — один вопрос.', 'Пройдено уроков: ' + doneL + ' из ' + LESSONS.length) +
+    tile('cards','Карточки правил','5 правил, нулевой показатель и ловушки: формула, почему работает, ошибки.') +
+    tile('choose','Выбери правило','Какое правило подходит для следующего шага?', D.chooseBest ? 'Лучший результат: ' + D.chooseBest + ' из ' + CHOOSE.length : '') +
+    tile('together','Решаем вместе','Разбор по шагам: выбираешь действие, вписываешь число, получаешь объяснение.', 'Разобрано: ' + Object.keys(D.together).length + ' из ' + TOGETHER.length) +
+    tile('practice','Самостоятельная тренировка','От простого к сложному, с подсказками в три уровня.', 'Уровень ' + D.level + ' из 6') +
+    tile('test','Пробная контрольная','10 заданий без подсказок, разбор и результаты по навыкам.', lastT ? 'Последняя: ' + lastT.score + ' из 10' : '') +
+    tile('mistakes','Мои ошибки','Похожие, но новые задания на твои типичные ошибки.', errN ? 'Записано ошибок: ' + errN : 'Пока пусто') +
+    '</div><div class="card small">' + (storageOK ? 'Прогресс сохраняется в этом браузере на этом устройстве.' : 'Сохранение недоступно в этом браузере (например, в режиме инкогнито). Всё работает, но прогресс не запомнится после закрытия страницы.') +
+    ' <button class="btn sm ghost" type="button" id="resetBtn">Сбросить прогресс</button></div>';
+  $('#resetBtn').addEventListener('click', function(){ if (confirm('Удалить весь сохранённый прогресс?')) { D = defaults(); save(); go('home'); } });
+};
+
+/* ===================== Уроки ===================== */
+VIEWS.lessons = function(){
+  app.innerHTML = '<h2>Разобраться с нуля</h2><p class="muted">Уроки лучше проходить по порядку. На каждом экране одна мысль и небольшой вопрос.</p>' +
+    LESSONS.map(function(l,i){ return '<button class="tile" type="button" style="margin:.5rem 0;min-height:0" data-go="lesson" data-arg="' + i + '"><b>' + (i+1) + '. ' + l.t + '</b><span>' + l.s.length + ' ' + word(l.s.length,'экран','экрана','экранов') + (D.lessons[i] ? ' · пройден' : '') + '</span></button>'; }).join('');
+};
+VIEWS.lesson = function(i, s){
+  s = s || 0;
+  var L = LESSONS[i], sc = L.s[s];
+  app.innerHTML = back('lessons','Все уроки') + '<h2>' + (i+1) + '. ' + L.t + '</h2><p class="prog">Экран ' + (s+1) + ' из ' + L.s.length + '</p><div class="bar"><i style="width:' + Math.round((s+1)/L.s.length*100) + '%"></i></div>' +
+    '<div class="card"><h3 style="margin-top:0">' + sc.h + '</h3>' + sc.b + '</div><div class="card" id="lq"></div>' +
+    '<div class="btns">' + (s > 0 ? '<button class="btn ghost" type="button" id="lPrev">← Назад</button>' : '') + '<button class="btn primary" type="button" id="lNext" disabled>' + (s < L.s.length-1 ? 'Дальше →' : 'Закончить урок') + '</button></div><p class="small muted" id="lWait">«Дальше» откроется после ответа на вопрос или просмотра решения.</p>';
+  mountWidgets(app);
+  var nextB = $('#lNext');
+  function unlock(){ nextB.disabled = false; $('#lWait').hidden = true; }
+  var t = sc.q();
+  runTask($('#lq'), t, {onOk:function(t,info){ unlock(); if (info.clean) statOk(t.skill); }, onBad:function(t,r){ logError(t, r.cat); statBad(t.skill); }, afterSolution:unlock});
+  if (s > 0) $('#lPrev').addEventListener('click', function(){ go('lesson', i, s-1); });
+  nextB.addEventListener('click', function(){
+    if (s < L.s.length-1) go('lesson', i, s+1);
+    else { D.lessons[i] = 1; save();
+      app.innerHTML = back('lessons','Все уроки') + '<div class="card" tabindex="-1" id="lDone"><h2>Урок «' + L.t + '» пройден</h2><p>Закрепи мысль в тренировке или переходи к следующему уроку.</p><div class="btns">' + (i < LESSONS.length-1 ? '<button class="btn primary" type="button" data-go="lesson" data-arg="' + (i+1) + '">Следующий урок</button>' : '') + '<button class="btn" type="button" data-go="practice">Тренировка</button><button class="btn ghost" type="button" data-go="lessons">Все уроки</button></div></div>';
+      reveal($('#lDone')); }
+  });
+};
+
+/* ===================== Карточки ===================== */
+VIEWS.cards = function(){
+  app.innerHTML = '<h2>Карточки правил</h2>' + CARDS.map(function(c){ return '<button class="tile" type="button" style="margin:.5rem 0;min-height:0" data-go="card" data-arg="' + c.id + '"><b>' + c.t + '</b><span>' + c.f + '</span></button>'; }).join('');
+};
+VIEWS.card = function(id){
+  var c = cardById(id); D.cards[id] = 1; save();
+  app.innerHTML = back('cards','Все карточки') + '<h2>' + c.t + '</h2><div class="formula">' + c.f + '</div>' +
+    '<div class="card"><h3 style="margin-top:0">Простыми словами</h3><p>' + c.words + '</p></div>' +
+    '<div class="card"><h3 style="margin-top:0">Почему это работает</h3>' + c.why + '</div>' +
+    '<div class="card"><h3 style="margin-top:0">Пример с числами</h3><p>' + c.numEx + '</p><h3>Пример с буквами</h3><p>' + c.letEx + '</p></div>' +
+    '<div class="card"><h3 style="margin-top:0">Типичная ошибка</h3><div class="wrongbox">' + c.err + '</div></div>' +
+    '<div class="card"><h3 style="margin-top:0">Обратное применение</h3><p>' + c.rev + '</p></div>' +
+    '<div class="btns"><button class="btn primary" type="button" id="cTrain">Потренировать это правило</button></div>';
+  mountWidgets(app);
+  $('#cTrain').addEventListener('click', function(){ go('practice', {gens:c.gens, title:c.t}); });
+};
+
+/* ===================== Выбери правило ===================== */
+VIEWS.choose = function(i, score){
+  i = i || 0; score = score || 0;
+  if (i >= CHOOSE.length) {
+    if (score > D.chooseBest) { D.chooseBest = score; save(); }
+    app.innerHTML = '<h2>Выбери правило</h2><div class="card" tabindex="-1" id="chDone"><p>С первой попытки верно: <b>' + score + ' из ' + CHOOSE.length + '</b>.</p><p>Главное здесь — сначала назвать действие, а уже потом считать.</p><div class="btns"><button class="btn primary" type="button" data-go="choose">Пройти ещё раз</button><button class="btn" type="button" data-go="together">Решаем вместе</button></div></div>';
+    reveal($('#chDone')); return;
+  }
+  var it = CHOOSE[i];
+  app.innerHTML = '<h2>Выбери правило</h2><p class="muted small">Не нужно решать весь пример — только выбрать правило для следующего шага. Если верных путей несколько, подойдёт любой.</p><p class="prog">Выражение ' + (i+1) + ' из ' + CHOOSE.length + '</p><div class="bar"><i style="width:' + Math.round((i+1)/CHOOSE.length*100) + '%"></i></div><div class="card" id="chBox"></div>';
+  var t = chooseTask(it);
+  runTask($('#chBox'), t, {next:{label: i < CHOOSE.length-1 ? 'Следующее выражение' : 'Итог', fn:function(){ go('choose', i+1, score); }},
+    onOk:function(t,info){ if (info.clean) { score++; statOk('mixed'); } }, onBad:function(t,r){ logError(t, r.cat); }});
+};
+
+/* ===================== Решаем вместе ===================== */
+VIEWS.together = function(){
+  app.innerHTML = '<h2>Решаем вместе</h2><p class="muted">Каждое задание разбито на шаги: выбираешь действие, вписываешь число и получаешь объяснение. Подсказки показывают только следующий шаг.</p>' +
+    TOGETHER.map(function(p,i){ return '<button class="tile" type="button" style="margin:.5rem 0;min-height:0" data-go="tproblem" data-arg="' + i + '"><b>' + p.t + (D.together[i] ? ' <span class="tag">разобрано</span>' : '') + '</b><span>' + p.p + '</span></button>'; }).join('');
+};
+VIEWS.tproblem = function(i){
+  var pb = TOGETHER[i], steps = pb.steps(), k = 0, log = [];
+  app.innerHTML = back('together','Все задания') + '<h2>' + pb.t + '</h2><div class="prompt">' + pb.p + '</div>' +
+    '<div class="work" id="work"><b>Запись решения</b><ol id="wlist"></ol></div><p class="prog" id="sprog"></p><div class="card" id="sbox" tabindex="-1"></div>' +
+    '<div class="btns"><button class="btn ghost" type="button" id="fullSol">Показать всё решение</button></div><div id="fullBox"></div>';
+  function drawLog(){ $('#wlist').innerHTML = log.filter(Boolean).map(function(x){ return '<li>' + x + '</li>'; }).join('') || '<li class="muted">Пока пусто — начни с первого шага.</li>'; mountWidgets($('#work')); }
+  function step(){
+    if (k >= steps.length) {
+      D.together[i] = 1; save();
+      $('#sprog').textContent = 'Все шаги пройдены';
+      $('#sbox').innerHTML = '<div tabindex="-1" id="tDone"><h3 style="margin-top:0">Готово</h3><p>' + pb.fin + '</p><p>Теперь попробуй похожее задание сама, без пошаговых вопросов.</p><div class="btns"><button class="btn primary" type="button" id="tSim">Похожее задание</button><button class="btn ghost" type="button" data-go="together">К списку</button></div></div>';
+      $('#tSim').addEventListener('click', function(){ go('practice', {gens:[pb.sim], title:'Похожее на «' + pb.t + '»'}); });
+      reveal($('#tDone')); return;
+    }
+    $('#sprog').textContent = 'Шаг ' + (k+1) + ' из ' + steps.length;
+    var s = steps[k];
+    runTask($('#sbox'), s.task, {next:{label:'Дальше', fn:function(){ k++; step(); reveal($('#sbox')); }},
+      onOk:function(t){ log.push(s.after); drawLog(); }, onBad:function(t,r){ logError(t, r.cat); }});
+  }
+  $('#fullSol').addEventListener('click', function(){
+    $('#fullBox').innerHTML = '<div class="solbox" tabindex="-1"><h3>Всё решение</h3><ol>' + steps.map(function(s){ return s.after ? '<li>' + s.after + '</li>' : ''; }).join('') + '</ol><p><b>Итог:</b> ' + pb.fin + '</p><p class="small">Теперь реши похожее задание самостоятельно.</p><div class="btns"><button class="btn primary" type="button" id="fSim">Решить похожее задание</button></div></div>';
+    mountWidgets($('#fullBox'));
+    $('#fSim').addEventListener('click', function(){ go('practice', {gens:[pb.sim], title:'Похожее на «' + pb.t + '»'}); });
+    reveal($('#fullBox .solbox'));
+  });
+  drawLog(); step();
+};
+
+/* ===================== Тренировка ===================== */
+var LEVELS = [null,
+  {t:'Простые степени', g:['mult1','div1','pp1','cmp']},
+  {t:'Числа и несколько букв', g:['mult2','mult3','div2','diff','zero','cmp']},
+  {t:'Степень произведения', g:['prod1','prod2','prodBig','F1','F2','pp1']},
+  {t:'Запись в виде степени (обратно)', g:['inv1','inv2','F3','F4','prod2']},
+  {t:'Дроби и сокращение', g:['divLess','recip','fracpow','numdec','F5','div2']},
+  {t:'Смешанные задания', g:['mixed','pp2','numdec2','F6','F7','minus','sum','inv2']}];
+VIEWS.practice = function(cfg){
+  cfg = cfg || null;
+  var sessErr = {}, shown = [], count = 0;
+  function header(){
+    if (cfg) return back('home','Главная') + '<h2>Тренировка: ' + cfg.title + '</h2>';
+    return '<h2>Самостоятельная тренировка</h2><p class="small muted">Уровень растёт после 4 заданий подряд, решённых с первой попытки без подсказок. Уровень можно выбрать и вручную.</p><div class="lvls" role="group" aria-label="Уровень">' +
+      [1,2,3,4,5,6].map(function(n){ return '<button class="btn sm ghost" type="button" data-lv="' + n + '" aria-current="' + (n===D.level) + '" title="' + LEVELS[n].t + '">' + n + '</button>'; }).join('') + '</div><p><b>Уровень ' + D.level + ':</b> ' + LEVELS[D.level].t + '. Подряд без ошибок: ' + D.streak + ' из 4.</p>';
+  }
+  app.innerHTML = '<div id="phead"></div><div id="review"></div><div class="card" id="pbox" tabindex="-1"></div>';
+  function drawHead(){ $('#phead').innerHTML = header(); }
+  $('#phead').addEventListener('click', function(e){ var b = e.target.closest('[data-lv]'); if (!b) return; D.level = +b.dataset.lv; D.streak = 0; save(); drawHead(); next(); });
+  function next(gens){
+    $('#review').innerHTML = '';
+    var pool = gens || (cfg ? cfg.gens : LEVELS[D.level].g);
+    var t = freshTask(pool, shown.slice(-6).concat(cfg && cfg.avoid ? cfg.avoid : []));
+    shown.push(t.sig); count++;
+    runTask($('#pbox'), t, {
+      next:{label:'Следующее задание', fn:function(){ next(); reveal($('#pbox')); }},
+      similar:function(t){ next([t.simGen]); reveal($('#pbox')); },
+      onOk:function(t, info){
+        if (info.clean) { statOk(t.skill); if (cfg && cfg.onFix) cfg.onFix(t); }
+        if (!cfg) {
+          if (info.clean) D.streak++; else D.streak = 0;
+          var nx = $('.next', info.box);
+          if (D.streak >= 4 && D.level < 6) {
+            D.level++; D.maxLevel = Math.max(D.maxLevel, D.level); D.streak = 0;
+            nx.insertAdjacentHTML('beforebegin', '<div class="fb info" style="display:block"><p>Четыре задания подряд решены с первой попытки. Открыт уровень ' + D.level + ': ' + LEVELS[D.level].t + '. Следующее задание будет с этого уровня.</p></div>');
+          }
+          save(); drawHead();
+        }
+      },
+      onBad:function(t, r, tries){
+        statBad(t.skill); var cat = logError(t, r.cat);
+        if (!cfg) { D.streak = 0; save(); drawHead(); }
+        sessErr[cat] = (sessErr[cat]||0) + 1;
+        if (sessErr[cat] >= 2 && CATS[cat] && CATS[cat].card) { sessErr[cat] = 0; showReview(cat); }
+      }});
+  }
+  function showReview(cat){
+    var c = CATS[cat];
+    var rv = $('#review');
+    rv.innerHTML = '<div class="review" tabindex="-1"><p><b>Короткое повторение.</b> Несколько раз подряд встретилась одна и та же трудность: «' + c.t + '». Вот нужное правило:</p>' + miniCard(c.card) + '<div class="btns"><button class="btn primary" type="button" id="rvOk">Понятно, продолжаю</button><button class="btn ghost" type="button" data-go="card" data-arg="' + c.card + '">Открыть карточку целиком</button></div></div>';
+    $('#rvOk').addEventListener('click', function(){ rv.innerHTML = ''; reveal($('#pbox')); });
+    reveal($('.review', rv));
+  }
+  drawHead(); next();
+};
+
+/* ===================== Мои ошибки ===================== */
+VIEWS.mistakes = function(){
+  var cats = Object.keys(D.errors).filter(function(k){ return D.errors[k] > 0 && CATS[k]; }).sort(function(a,b){ return D.errors[b] - D.errors[a]; });
+  app.innerHTML = '<h2>Мои ошибки</h2>' + (cats.length ? '<p class="muted">Здесь собраны типы ошибок из всех режимов. Для каждого можно повторить правило и решить новое похожее задание.</p>' +
+    cats.map(function(k){ var c = CATS[k]; return '<div class="card"><b>' + c.t + '</b><p class="small">Ошибок: ' + D.errors[k] + (D.fixed[k] ? ' · исправлено заданиями: ' + D.fixed[k] : '') + '</p><div class="btns"><button class="btn primary sm" type="button" data-fix="' + k + '">Решить похожее задание</button>' + (c.card ? '<button class="btn ghost sm" type="button" data-go="card" data-arg="' + c.card + '">Повторить правило</button>' : '') + '</div></div>'; }).join('') +
+    '<div class="btns"><button class="btn ghost sm" type="button" id="clrErr">Очистить список ошибок</button></div>'
+    : '<div class="card"><p>Пока ошибок не записано. Они появятся, когда ты будешь решать задания в любом режиме.</p><div class="btns"><button class="btn primary" type="button" data-go="practice">К тренировке</button></div></div>');
+  $$('[data-fix]', app).forEach(function(b){ b.addEventListener('click', function(){ var k = b.dataset.fix;
+    go('practice', {gens:CATS[k].gens, title:CATS[k].t, avoid:recentSigs(), onFix:function(){ D.fixed[k] = (D.fixed[k]||0) + 1; save(); }}); }); });
+  var cl = $('#clrErr'); if (cl) cl.addEventListener('click', function(){ if (confirm('Очистить список ошибок?')) { D.errors = {}; D.fixed = {}; D.recent = []; save(); go('mistakes'); } });
+};
+
+/* ===================== Пробная контрольная ===================== */
+var TEST_PLAN = [['mult2','mult3'],['div2','div1'],['pp1','pp2'],['F2','prod2','F1'],['fracpow'],['divLess','recip'],['F3','F4','inv2'],['F5','F6','F7','numdec','numdec2'],['mixed'],['minus','sum','recip']];
+VIEWS.test = function(){
+  app.innerHTML = '<h2>Пробная контрольная</h2><div class="card"><p>10 заданий разной сложности — от простых к смешанным. Во время работы подсказок и проверки нет; разбор и результаты по навыкам будут после завершения.</p><p>Между заданиями можно переходить и менять ответы.</p>' +
+    '<p><label style="display:flex;gap:.6rem;align-items:center;min-height:44px"><input type="checkbox" id="tmOn" style="width:24px;height:24px"' + (D.timerOn ? ' checked' : '') + '> Включить таймер на 25 минут (необязательно)</label></p>' +
+    '<div class="btns"><button class="btn primary" type="button" id="tStart">Начать</button></div></div>' +
+    (D.tests.length ? '<div class="card"><h3 style="margin-top:0">Прошлые попытки</h3><ul>' + D.tests.slice(-5).reverse().map(function(r){ return '<li>' + r.date + ': ' + r.score + ' из 10</li>'; }).join('') + '</ul></div>' : '');
+  $('#tStart').addEventListener('click', function(){ D.timerOn = $('#tmOn').checked; save(); go('testrun', {timer:D.timerOn}); });
+};
+VIEWS.testrun = function(cfg){
+  var tasks = TEST_PLAN.map(function(g){ return freshTask(g); }), vals = tasks.map(function(){ return null; }), cur = 0, left = 25*60;
+  app.innerHTML = '<h2>Пробная контрольная</h2>' + (cfg.timer ? '<p>Осталось: <span class="timer" id="tmr" aria-live="off"></span></p>' : '') + '<div class="qnav" id="qnav" role="group" aria-label="Задания"></div><div class="card" id="tq" tabindex="-1"></div>' +
+    '<div class="btns"><button class="btn ghost" type="button" id="tPrev">← Назад</button><button class="btn primary" type="button" id="tNext">Дальше →</button><button class="btn" type="button" id="tEnd">Завершить</button></div><div id="tConfirm"></div>';
+  function answered(i){ return vals[i] && evalTask(tasks[i], vals[i]).st !== 'empty'; }
+  function store(){ var r = $('#tq .task'); if (r) vals[cur] = readVals(r); }
+  function draw(){
+    $('#qnav').innerHTML = tasks.map(function(t,i){ return '<button class="btn sm ghost' + (answered(i) ? ' has' : '') + '" type="button" data-q="' + i + '" aria-current="' + (i===cur) + '" aria-label="Задание ' + (i+1) + (answered(i) ? ', есть ответ' : '') + '">' + (i+1) + '</button>'; }).join('');
+    var t = tasks[cur];
+    $('#tq').innerHTML = '<p class="prog">Задание ' + (cur+1) + ' из 10</p><div class="task"><div class="prompt">' + t.prompt + '</div><p class="ask">' + t.ask + '</p><div class="inp">' + inputUI(t) + '</div>' + noteFor(t) + '</div>';
+    fillVals($('#tq'), vals[cur]);
+    $('#tPrev').disabled = cur === 0; $('#tNext').disabled = cur === 9;
+  }
+  $('#tq').addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.opt) { $$('#tq .opt').forEach(function(x){ x.setAttribute('aria-pressed','false'); }); b.setAttribute('aria-pressed','true'); store(); draw(); }
+    if (b.dataset.a === 'sign') { var inp = $('#tq input[data-f=v]'); var s = inp.value.trim(); inp.value = /^[−-]/.test(s) ? s.replace(/^[−-]/,'') : '−' + s; store(); } });
+  $('#tq').addEventListener('input', store);
+  $('#qnav').addEventListener('click', function(e){ var b = e.target.closest('[data-q]'); if (!b) return; store(); cur = +b.dataset.q; draw(); });
+  $('#tPrev').addEventListener('click', function(){ store(); if (cur > 0) { cur--; draw(); } });
+  $('#tNext').addEventListener('click', function(){ store(); if (cur < 9) { cur++; draw(); reveal($('#tq')); } });
+  $('#tEnd').addEventListener('click', function(){
+    store(); draw();
+    var empty = tasks.filter(function(t,i){ return !answered(i); }).length;
+    if (!empty) return finish();
+    $('#tConfirm').innerHTML = '<div class="fb info" tabindex="-1" style="display:block"><p>Без ответа: ' + empty + ' ' + word(empty,'задание','задания','заданий') + '. Завершить всё равно?</p><div class="btns"><button class="btn primary" type="button" id="cYes">Завершить</button><button class="btn ghost" type="button" id="cNo">Вернуться к заданиям</button></div></div>';
+    $('#cYes').addEventListener('click', finish); $('#cNo').addEventListener('click', function(){ $('#tConfirm').innerHTML = ''; });
+    reveal($('#tConfirm .fb'));
+  });
+  function tick(){ var el = $('#tmr'); if (!el) return; el.textContent = Math.floor(left/60) + ':' + ('0' + left%60).slice(-2); if (left <= 0) { stopTimer(); finish(true); } left--; }
+  if (cfg.timer) { tick(); timerId = setInterval(tick, 1000); }
+  function finish(byTimer){
+    stopTimer(); store();
+    var res = tasks.map(function(t,i){ return evalTask(t, vals[i] || {}); });
+    var by = {}, score = 0;
+    res.forEach(function(r,i){ var t = tasks[i], pts = r.st === 'ok' ? 1 : r.st === 'part' ? .5 : 0; score += pts;
+      var b = by[t.skill] = by[t.skill] || {n:0, p:0}; b.n++; b.p += pts;
+      if (pts === 1) statOk(t.skill); else { statBad(t.skill); if (r.st === 'bad' || r.st === 'part') logError(t, r.cat); else logError(t, t.cat); } });
+    var d = new Date(); D.tests.push({date:d.toLocaleDateString('ru-RU') + ' ' + d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}), score:score}); if (D.tests.length > 30) D.tests = D.tests.slice(-30); save();
+    var weak = Object.keys(by).filter(function(k){ return by[k].p < by[k].n; });
+    app.innerHTML = '<h2>Результаты пробной контрольной</h2><div class="card" tabindex="-1" id="tRes">' + (byTimer ? '<p>Время вышло — работа завершена автоматически.</p>' : '') +
+      '<p style="font-size:1.25rem"><b>' + String(score).replace('.',',') + ' из 10</b></p><p class="small muted">Полностью верный ответ — 1 балл, «верно, но не закончено» — 0,5 балла.</p>' +
+      '<h3>По навыкам</h3><table><tr><th>Навык</th><th>Результат</th><th></th></tr>' + Object.keys(by).map(function(k){ var b = by[k], c = CATS['skill:'+k]; return '<tr><td>' + SKILLS[k] + '</td><td>' + String(b.p).replace('.',',') + ' из ' + b.n + '</td><td>' + (b.p < b.n && c && c.card ? '<button class="btn sm ghost" type="button" data-go="card" data-arg="' + c.card + '">Повторить</button>' : (b.p === b.n ? 'получилось' : '')) + '</td></tr>'; }).join('') + '</table>' +
+      (weak.length ? '<p>Стоит потренировать: ' + weak.map(function(k){ return SKILLS[k]; }).join(', ') + '. Ошибки добавлены в раздел «Мои ошибки».</p>' : '<p>Все навыки этой работы получились.</p>') +
+      '<div class="btns"><button class="btn primary" type="button" data-go="mistakes">Мои ошибки</button><button class="btn" type="button" data-go="test">Ещё одна контрольная</button></div></div><h3>Разбор заданий</h3>' +
+      tasks.map(function(t,i){ var r = res[i]; var lab = r.st === 'ok' ? '✓ Верно' : r.st === 'part' ? '≈ Верно, но не закончено' : r.st === 'empty' ? '— Нет ответа' : '✗ Неверно';
+        return '<div class="card"><p><b>' + (i+1) + '.</b> <span class="tag">' + SKILLS[t.skill] + '</span></p><div class="prompt">' + t.prompt + '</div><p class="small">' + t.ask + '</p>' +
+          '<p><b>' + lab + '.</b> Твой ответ: ' + userHtml(t, vals[i]) + '</p>' + (r.st !== 'ok' ? '<p>Верный ответ: ' + t.ansHtml + '</p>' + (r.msg ? '<p class="small">' + r.msg + '</p>' : '') : '') +
+          '<details><summary>Решение</summary>' + t.solution + '</details></div>'; }).join('');
+    $$('details', app).forEach(function(d){ d.addEventListener('toggle', function(){ if (d.open) mountWidgets(d); }); });
+    window.scrollTo(0,0); reveal($('#tRes'));
+  }
+  draw();
+};
+
+go('home');
+
+</script>
+<!-- ПАНЕЛЬ АВТОРА: вставить перед </body>. Стили и разметка самодостаточны, внешних файлов нет. -->
+<style>
+.author-bar{position:fixed;left:0;right:0;bottom:0;z-index:2147483000;display:flex;justify-content:center;align-items:center;gap:.5rem;flex-wrap:wrap;padding:.5rem 1rem;background:#0f2d22;color:#fff;font:600 14px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;text-align:center;box-shadow:0 -2px 10px rgba(0,0,0,.15)}
+.author-bar a{color:#9ff0d2;text-decoration:none}
+.author-bar a:hover,.author-bar a:focus{text-decoration:underline}
+body{padding-bottom:3.25rem}
+</style>
+<div class="author-bar" role="contentinfo"><span>Ксения Каширина,</span> <a href="mailto:kashka2807@mail.ru">kashka2807@mail.ru</a></div>
+
+</body>
+</html>
